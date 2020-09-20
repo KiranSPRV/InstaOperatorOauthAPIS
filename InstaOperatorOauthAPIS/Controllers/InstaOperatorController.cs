@@ -78,6 +78,7 @@ namespace InstaOperatorOauthAPIS.Controllers
                     }
                     else
                     {
+                        loginmsg = "Invalid Credentials";
                         ObjAPIResponse.Object = null;
                         ObjAPIResponse.Result = false;
                         ObjAPIResponse.Message = "Invalid Credentials";
@@ -1203,7 +1204,7 @@ namespace InstaOperatorOauthAPIS.Controllers
         }
 
         [HttpPost]
-        [ActionName("postOPAPPVerifyNFCCardPass ")]
+        [ActionName("postOPAPPVerifyNFCCardPass")]
         public HttpResponseMessage postOPAPPVerifyNFCCardPass(VehiclePass obj)
         {
 
