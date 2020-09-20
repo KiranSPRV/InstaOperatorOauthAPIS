@@ -1160,8 +1160,6 @@ namespace InstaOperatorOauthAPIS.Controllers
         #endregion
 
         #region Pass
-
-
         [HttpPost]
         [ActionName("postOPAPPVerifyVehicleHasPass")]
         public HttpResponseMessage postOPAPPVerifyVehicleHasPass(VehiclePass obj)
@@ -1205,7 +1203,7 @@ namespace InstaOperatorOauthAPIS.Controllers
         }
 
         [HttpPost]
-        [ActionName("postOPAPPVerifyNFCCardPass")]
+        [ActionName("postOPAPPVerifyNFCCardPass ")]
         public HttpResponseMessage postOPAPPVerifyNFCCardPass(VehiclePass obj)
         {
 
