@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
 namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
 {
     public class PaymentType

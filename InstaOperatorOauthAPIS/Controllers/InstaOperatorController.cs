@@ -861,18 +861,19 @@ namespace InstaOperatorOauthAPIS.Controllers
                 DALCustomerVehicleParkingLot dal_CustomerVehicleParkingLot = new DALCustomerVehicleParkingLot();
                 VMLocationLotParkedVehicles objresult = dal_CustomerVehicleParkingLot.GetParkedVehicles(objLocationAllParkedVehicles);
 
-                if (objresult.CustomerParkingSlotID.Count > 0)
+                if (objresult.CustomerParkingSlotID.Count== 0 && objresult.TotalTwoWheeler==0 && objresult.TotalFourWheeler == 0 && objresult.TotalOutTwoWheeler == 0 && objresult.TotalOutFourWheeler == 0)
+                {
+                    ObjAPIResponse.Object = (object)null;
+                    ObjAPIResponse.Result = true;
+                    ObjAPIResponse.Message = "Fail";
+                    
+                }
+                else
                 {
                     ObjAPIResponse.Object = (object)objresult;
                     ObjAPIResponse.Result = true;
                     ObjAPIResponse.Message = "Success";
-                }
-                else
-                {
 
-                    ObjAPIResponse.Object = (object)null;
-                    ObjAPIResponse.Result = true;
-                    ObjAPIResponse.Message = "Fail";
                 }
 
                 resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
@@ -1941,6 +1942,45 @@ namespace InstaOperatorOauthAPIS.Controllers
             return resp;
         }
 
+
+        [HttpPost]
+        [ActionName("postRecentCheckOutReport")]
+        public HttpResponseMessage postRecentCheckOutReport(RecentCheckOutFilter objfilter)
+        {
+
+            ObjAPIResponse = new APIResponse();
+            var resp = new HttpResponseMessage(HttpStatusCode.OK);
+            try
+            {
+                DALCustomerVehicleParkingLot dal_CustomerVehicleParkingLot = new DALCustomerVehicleParkingLot();
+               RecentCheckOutReport objReports  = dal_CustomerVehicleParkingLot.GetRecentCheckOutsReport(objfilter);
+                if (objReports!=null)
+                {
+                    ObjAPIResponse.Object = (object)objReports;
+                    ObjAPIResponse.Result = true;
+                    ObjAPIResponse.Message = "Success";
+                }
+                else
+                {
+                    ObjAPIResponse.Object = null;
+                    ObjAPIResponse.Result = false;
+                    ObjAPIResponse.Message = "No Records Found";
+                }
+
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            }
+            catch (Exception ex)
+            {
+                ObjAPIResponse.Object = null;
+                ObjAPIResponse.Result = false;
+                ObjAPIResponse.Message = "Please contact administration";
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            }
+            return resp;
+        }
 
         #endregion
 

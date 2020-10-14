@@ -226,6 +226,7 @@
     </Compile>
     <Compile Include="Helper_Code\OAuth2\AppOAuthProvider.cs" />
     <Compile Include="Models\APIInputModel\ParkedVehiclesFilter.cs" />
+    <Compile Include="Models\APIInputModel\RecentCheckOutFilter.cs" />
     <Compile Include="Models\APIInputModel\VehicleCheckIn.cs" />
     <Compile Include="Models\APIInputModel\VehicleLotPassPrice.cs" />
     <Compile Include="Models\APIInputModel\VehicleParkingFee.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Models\APIOutPutModel\PassCardTypeMapper.cs" />
     <Compile Include="Models\APIOutPutModel\PassType.cs" />
     <Compile Include="Models\APIOutPutModel\PaymentType.cs" />
+    <Compile Include="Models\APIOutPutModel\RecentCheckOutReport.cs" />
     <Compile Include="Models\APIOutPutModel\Status.cs" />
     <Compile Include="Models\APIOutPutModel\User.cs" />
     <Compile Include="Models\APIOutPutModel\UserDailyLogin.cs" />
@@ -274,6 +276,7 @@
     <Compile Include="VMModels\VMLoginVerification.cs" />
     <Compile Include="VMModels\VMMultiStationCustomerVehiclePass.cs" />
     <Compile Include="VMModels\VMPassPrice.cs" />
+    <Compile Include="VMModels\VMRecentCheckOuts.cs" />
     <Compile Include="VMModels\VMReportSummary.cs" />
     <Compile Include="VMModels\VMUserDailyLogin.cs" />
   </ItemGroup>

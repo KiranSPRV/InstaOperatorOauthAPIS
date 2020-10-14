@@ -75,7 +75,7 @@ namespace InstaOperatorOauthAPIS.DAL
                             objcheckOut.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
                             objcheckOut.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
                             objcheckOut.IsClamp = resultdt.Rows[0]["IsClamp"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IsClamp"]);
-
+                            objcheckOut.ExtendAmount = resultdt.Rows[0]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ExtendAmount"]); 
                             PushNotification pushNotification = new PushNotification();
                             NotificationContent notificationContent = new NotificationContent();
                             notificationContent.DeviceID = Convert.ToString(resultdt.Rows[0]["DeviceID"]);
