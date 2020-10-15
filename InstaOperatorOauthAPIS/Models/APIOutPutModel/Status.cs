@@ -9,6 +9,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
     {
         public int StatusID { get; set; }
         public string StatusCode { get; set; }
+       
         public bool ShowStatus{ get; set; }
         public string StatusName { get; set; }
         public string StatusDesc { get; set; }

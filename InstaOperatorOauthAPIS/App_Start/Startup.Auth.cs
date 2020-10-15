@@ -47,7 +47,7 @@ namespace InstaOperatorOauthAPIS
                 TokenEndpointPath = new PathString("/Token"),
                 Provider = new AppOAuthProvider(PublicClientId),
                 AuthorizeEndpointPath = new PathString("/Account/ExternalLogin"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromHours(4),
+                AccessTokenExpireTimeSpan = TimeSpan.FromHours(24),
                 AllowInsecureHttp = true //Don't do this in production ONLY FOR DEVELOPING: ALLOW INSECURE HTTP!
             };
 

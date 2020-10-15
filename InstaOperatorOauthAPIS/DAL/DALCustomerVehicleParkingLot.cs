@@ -903,7 +903,6 @@ namespace InstaOperatorOauthAPIS.DAL
 
         #endregion
 
-
         #region RecentCheckOuts
         public RecentCheckOutReport GetRecentCheckOutsReport(RecentCheckOutFilter objfilter)
         {
@@ -913,48 +912,53 @@ namespace InstaOperatorOauthAPIS.DAL
             {
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
-                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_Report_GetLocationLotParkingReport", sqlconn_obj))
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_Report_GetRecentCheckOuts", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
                         sqlcmd_obj.Parameters.AddWithValue("@LocationID", objfilter.LocationID == 0 ? (object)DBNull.Value : objfilter.LocationID);
                         sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", objfilter.LocationParkingLotID == 0 ? (object)DBNull.Value : objfilter.LocationParkingLotID);
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", (objfilter.UserID == null || objfilter.UserID == 0) ? (object)DBNull.Value : objfilter.UserID);
-                        sqlcmd_obj.Parameters.AddWithValue("@SelectedDay", objfilter.SelectedDay == null ? (object)DBNull.Value : objfilter.SelectedDay == null);
-                        sqlcmd_obj.Parameters.AddWithValue("@Ins", objfilter.Ins == false ? (object)DBNull.Value : objfilter.Ins);
-                        sqlcmd_obj.Parameters.AddWithValue("@Outs", objfilter.Outs == false ? (object)DBNull.Value : objfilter.Outs);
-                        sqlcmd_obj.Parameters.AddWithValue("@Outs", objfilter.Outs == false ? (object)DBNull.Value : objfilter.Outs);
+                        sqlcmd_obj.Parameters.AddWithValue("@SelectedDay", objfilter.SelectedDay == null ? (object)DBNull.Value : objfilter.SelectedDay);
+                        sqlcmd_obj.Parameters.AddWithValue("@Ins", objfilter.Ins == false ? false : objfilter.Ins);
+                        sqlcmd_obj.Parameters.AddWithValue("@Outs", objfilter.Outs == false ? false : objfilter.Outs);
                         sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", objfilter.VehicleTypeCode == "" ? (object)DBNull.Value : objfilter.VehicleTypeCode);
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
                         sqldap.Fill(ds);
                         if (ds.Tables.Count > 0)
                         {
-                            DataTable dtRecentCheckOuts = new DataTable();
-                            DataTable dtCashSummary = new DataTable();
+                            DataTable dtRecentCheckOuts = ds.Tables[0];
+                            DataTable dtCashSummary = ds.Tables[1];
+
                             if (dtRecentCheckOuts.Rows.Count > 0)
                             {
+
+
                                 for (var i = 0; i < dtRecentCheckOuts.Rows.Count; i++)
                                 {
                                     VMRecentCheckOuts objVMCheckOut = new VMRecentCheckOuts();
-                                    objVMCheckOut.CustomerParkingSlotHistoryID = dtRecentCheckOuts.Rows[i]["CustomerParkingSlotHistoryID"] == DBNull.Value ? 0 : Convert.ToInt32(dtRecentCheckOuts.Rows[i]["CustomerParkingSlotHistoryID"]);
+                                    objVMCheckOut.CustomerParkingSlotHistoryID = dtRecentCheckOuts.Rows[i]["CustomerParkingSlotID"] == DBNull.Value ? 0 : Convert.ToInt32(dtRecentCheckOuts.Rows[i]["CustomerParkingSlotID"]);
                                     objVMCheckOut.RegistrationNumber = dtRecentCheckOuts.Rows[i]["RegistrationNumber"] == DBNull.Value ? "" : Convert.ToString(dtRecentCheckOuts.Rows[i]["RegistrationNumber"]);
                                     objVMCheckOut.StatusID.StatusCode = dtRecentCheckOuts.Rows[i]["StatusCode"] == DBNull.Value ? "" : Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]);
                                     objVMCheckOut.ActualStartTime = dtRecentCheckOuts.Rows[i]["ActualStartTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(dtRecentCheckOuts.Rows[i]["ActualStartTime"]);
                                     objVMCheckOut.ActualEndTime = dtRecentCheckOuts.Rows[i]["ActualEndTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(dtRecentCheckOuts.Rows[i]["ActualEndTime"]);
                                     objVMCheckOut.Operator.UserID = dtRecentCheckOuts.Rows[i]["UserID"] == DBNull.Value ? 0 : Convert.ToInt32(dtRecentCheckOuts.Rows[i]["UserID"]);
                                     objVMCheckOut.Operator.UserCode = dtRecentCheckOuts.Rows[i]["UserCode"] == DBNull.Value ? "" : Convert.ToString(dtRecentCheckOuts.Rows[i]["UserCode"]);
-                                    objVMCheckOut.CashAmount = dtRecentCheckOuts.Rows[i]["CashAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(dtRecentCheckOuts.Rows[i]["CashAmount"]);
-                                    objVMCheckOut.EpayAmount = dtRecentCheckOuts.Rows[i]["EpayAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(dtRecentCheckOuts.Rows[i]["EpayAmount"]);
+                                    objVMCheckOut.CashAmount = dtRecentCheckOuts.Rows[i]["Cash"] == DBNull.Value ? 0 : Convert.ToDecimal(dtRecentCheckOuts.Rows[i]["Cash"]);
+                                    objVMCheckOut.EpayAmount = dtRecentCheckOuts.Rows[i]["Epay"] == DBNull.Value ? 0 : Convert.ToDecimal(dtRecentCheckOuts.Rows[i]["Epay"]);
+                                    objVMCheckOut.ApplicationTypeID.ApplicationTypeCode = dtRecentCheckOuts.Rows[i]["ApplicationTypeCode"] == DBNull.Value ? "" : Convert.ToString(dtRecentCheckOuts.Rows[i]["ApplicationTypeCode"]);
+                                    objVMCheckOut.VehilceStatusColor = "#010101";
                                     if (Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]) == "V")
                                     {
                                         objVMCheckOut.VehilceStatusColor = "#ff0000";
+                                        objVMCheckOut.ApplicationTypeID.ApplicationTypeCode = "V";
                                     }
                                     objCheckOutReport.RecentCheckOutID.Add(objVMCheckOut);
                                 }
                                 if(dtCashSummary.Rows.Count>0)
                                 {
-                                    objCheckOutReport.TotalCash = dtCashSummary.Rows[0]["TotalCash"] == DBNull.Value ? 0 : Convert.ToDecimal(dtCashSummary.Rows[0]["TotalCash"]);
-                                    objCheckOutReport.TotalEpay = dtCashSummary.Rows[0]["TotalEpay"] == DBNull.Value ? 0 : Convert.ToDecimal(dtCashSummary.Rows[0]["TotalEpay"]);
+                                    objCheckOutReport.TotalCash = dtCashSummary.Rows[0]["Cash"] == DBNull.Value ? 0 : Convert.ToDecimal(dtCashSummary.Rows[0]["Cash"]);
+                                    objCheckOutReport.TotalEpay = dtCashSummary.Rows[0]["Epay"] == DBNull.Value ? 0 : Convert.ToDecimal(dtCashSummary.Rows[0]["Epay"]);
                                 }
                             }
                         }
