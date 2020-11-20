@@ -32,7 +32,7 @@ namespace InstaOperatorOauthAPIS.Controllers
             try
             {
                 DALExceptionManagment dal_ExceptionManagment = new DALExceptionManagment();
-                string resultmsgs = dal_ExceptionManagment.InsertException(obj.ApplicationType, obj.ExcepionMessage, obj.Module, obj.Procedure, obj.Method);
+                string resultmsgs = dal_ExceptionManagment.InsertException(obj.ApplicationType, obj.ExceptionMessage, obj.Module, obj.Procedure, obj.Method);
                 ObjAPIResponse.Object = null;
                 ObjAPIResponse.Result = true;
                 ObjAPIResponse.Message = resultmsgs;
@@ -78,7 +78,7 @@ namespace InstaOperatorOauthAPIS.Controllers
                     }
                     else
                     {
-                        loginmsg = "Invalid Credentials" ;
+                        loginmsg = "Invalid Credentials";
                         ObjAPIResponse.Object = null;
                         ObjAPIResponse.Result = false;
                         ObjAPIResponse.Message = "Invalid Credentials";
@@ -283,10 +283,9 @@ namespace InstaOperatorOauthAPIS.Controllers
             return resp;
         }
 
-
         [HttpPost]
         [ActionName("postOPAPPLocationLotActiveOperartor")]
-        public HttpResponseMessage postOPAPPLocationLotActiveOperartors(LocationParkingLot objLocationParkingLot)
+        public HttpResponseMessage postOPAPPLocationLotActiveOperartors(User objUserLocationParkingLot)
         {
 
             ObjAPIResponse = new APIResponse();
@@ -294,7 +293,7 @@ namespace InstaOperatorOauthAPIS.Controllers
             try
             {
                 DALUserLoginVerification dal_UserLoginVerification = new DALUserLoginVerification();
-                List<User> resultobj = dal_UserLoginVerification.LocationLotActiveOperartors(objLocationParkingLot);
+                List<User> resultobj = dal_UserLoginVerification.LocationLotActiveOperartors(objUserLocationParkingLot);
                 if (resultobj.Count > 0)
                 {
                     ObjAPIResponse.Object = (object)resultobj;
@@ -325,7 +324,6 @@ namespace InstaOperatorOauthAPIS.Controllers
             }
             return resp;
         }
-
 
         [HttpPost]
         [ActionName("postOPAPPUserDailyLoginHistory")]
@@ -415,6 +413,51 @@ namespace InstaOperatorOauthAPIS.Controllers
         #endregion
 
         #region CheckIn
+
+        [HttpPost]
+        [ActionName("postOPAPPLocationLotActiveVehicleTypes")]
+        public HttpResponseMessage postOPAPPLocationLotActiveVehicleTypes(User objloginUser)
+        {
+
+            ObjAPIResponse = new APIResponse();
+            var resp = new HttpResponseMessage(HttpStatusCode.OK);
+            try
+            {
+                DALCheckIn dal_CheckIn = new DALCheckIn();
+                List<VehicleType> lstVehicleType = dal_CheckIn.GetLocationParkingLotVehicleParkingFee(objloginUser);
+                if (lstVehicleType.Count > 0)
+                {
+                    ObjAPIResponse.Object = (object)lstVehicleType;
+                    ObjAPIResponse.Result = true;
+                    ObjAPIResponse.Message = "Success";
+                    resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                    resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                }
+                else
+                {
+                    ObjAPIResponse.Object = null;
+                    ObjAPIResponse.Result = false;
+                    ObjAPIResponse.Message = "No Records Found";
+                    resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                    resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                ObjAPIResponse.Object = null;
+                ObjAPIResponse.Result = false;
+                ObjAPIResponse.Message = "Please contact administration";
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            }
+            return resp;
+        }
+
+
 
         [HttpPost]
         [ActionName("postOPAPPGetVehicleParkingFee")]
@@ -668,6 +711,7 @@ namespace InstaOperatorOauthAPIS.Controllers
             {
                 DALCheckIn dal_CheckIn = new DALCheckIn();
                 CustomerVehiclePass objCustomerpass = dal_CheckIn.GetNFCCardVehiclePassDetails(obj.NFCCardNumber);
+                
                 if (objCustomerpass.CustomerVehiclePassID != 0)
                 {
                     string resultmsg = dal_CheckIn.VerifyCustomerNFCCardExpiry(objCustomerpass, obj.LocationID);
@@ -825,13 +869,35 @@ namespace InstaOperatorOauthAPIS.Controllers
             var resp = new HttpResponseMessage(HttpStatusCode.OK);
             try
             {
+                string resultmsg = string.Empty;
                 DALViolation dal_Violation = new DALViolation();
-                string resultmsg = dal_Violation.SaveVehicleViolationAndClamp(objViolationAndClamp);
-                ObjAPIResponse.Object = (object)null;
-                ObjAPIResponse.Result = true;
-                ObjAPIResponse.Message = resultmsg;
-                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
-                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                DALCheckIn dal_CheckIn = new DALCheckIn();
+
+                VehicleCheckIn objVehicleCheckIn = new VehicleCheckIn();
+                objVehicleCheckIn.RegistrationNumber = objViolationAndClamp.RegistrationNumber;
+                objVehicleCheckIn.LocationID = objViolationAndClamp.LocationID;
+                objVehicleCheckIn.LocationParkingLotID = objViolationAndClamp.LocationParkingLotID;
+                CustomerParkingSlot objViolationCustomerParkingSlot = dal_CheckIn.VerifyVehicleInCheckInStatus(objVehicleCheckIn);
+                if (objViolationCustomerParkingSlot.CustomerParkingSlotID == 0)
+                {
+                    resultmsg = dal_Violation.SaveVehicleViolationAndClamp(objViolationAndClamp);
+                    ObjAPIResponse.Object = null;
+                    ObjAPIResponse.Result = true;
+                    ObjAPIResponse.Message = resultmsg;
+                    resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                    resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                }
+                else
+                {
+                    ObjAPIResponse.Object = null;
+                    ObjAPIResponse.Result = false;
+                    ObjAPIResponse.Message = "Record alredary exists";
+                    resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                    resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -861,12 +927,12 @@ namespace InstaOperatorOauthAPIS.Controllers
                 DALCustomerVehicleParkingLot dal_CustomerVehicleParkingLot = new DALCustomerVehicleParkingLot();
                 VMLocationLotParkedVehicles objresult = dal_CustomerVehicleParkingLot.GetParkedVehicles(objLocationAllParkedVehicles);
 
-                if (objresult.CustomerParkingSlotID.Count== 0 && objresult.TotalTwoWheeler==0 && objresult.TotalFourWheeler == 0 && objresult.TotalOutTwoWheeler == 0 && objresult.TotalOutFourWheeler == 0)
+                if (objresult.CustomerParkingSlotID.Count == 0 && objresult.TotalTwoWheeler == 0 && objresult.TotalFourWheeler == 0 && objresult.TotalOutTwoWheeler == 0 && objresult.TotalOutFourWheeler == 0)
                 {
                     ObjAPIResponse.Object = (object)null;
                     ObjAPIResponse.Result = true;
                     ObjAPIResponse.Message = "Fail";
-                    
+
                 }
                 else
                 {
@@ -1162,6 +1228,7 @@ namespace InstaOperatorOauthAPIS.Controllers
         #endregion
 
         #region Pass
+
         [HttpPost]
         [ActionName("postOPAPPVerifyVehicleHasPass")]
         public HttpResponseMessage postOPAPPVerifyVehicleHasPass(VehiclePass obj)
@@ -1326,7 +1393,7 @@ namespace InstaOperatorOauthAPIS.Controllers
 
         [HttpGet]
         [ActionName("getOPAPPGetAllPassLocationsByVehicleType")]
-        public HttpResponseMessage getOPAPPGetAllPassLocationsByVehicleType(string VehicleTypeCode,string CustomerVehiclePassId)
+        public HttpResponseMessage getOPAPPGetAllPassLocationsByVehicleType(string VehicleTypeCode, string CustomerVehiclePassId)
         {
 
             ObjAPIResponse = new APIResponse();
@@ -1548,7 +1615,6 @@ namespace InstaOperatorOauthAPIS.Controllers
             return resp;
         }
 
-
         [HttpPost]
         [ActionName("postValidateVehiclePass")]
         public HttpResponseMessage postValidateVehiclePass(CustomerVehicle selectedVehicle)
@@ -1598,8 +1664,6 @@ namespace InstaOperatorOauthAPIS.Controllers
             return resp;
         }
 
-
-
         [HttpPost]
         [ActionName("postVerifyVehiclePass")]
         public HttpResponseMessage postVerifyVehiclePass(CustomerVehiclePass objCustomerVehiclePass)
@@ -1640,6 +1704,49 @@ namespace InstaOperatorOauthAPIS.Controllers
             }
             return resp;
         }
+
+        /*
+        [HttpPost]
+        [ActionName("postSaveCustomerVehiclePassNewNFCCard")]
+        public HttpResponseMessage postSaveCustomerVehiclePassNewNFCCard(CustomerVehiclePass objCustomerVehiclePass)
+        {
+
+            ObjAPIResponse = new APIResponse();
+            var resp = new HttpResponseMessage(HttpStatusCode.OK);
+            try
+            {
+                DALPass dal_Pass = new DALPass();
+                int CustomerVehiclePassID = dal_Pass.SaveCustomerVehiclePassNFCCard(objCustomerVehiclePass);
+                if (CustomerVehiclePassID>0)
+                {
+                    ObjAPIResponse.Object =(object)dal_Pass.GetCustomerVehiclePassDetails(objCustomerVehiclePass);
+                    ObjAPIResponse.Result = true;
+                    ObjAPIResponse.Message = "Vehicle alreday has pass";
+                }
+                else
+                {
+                    ObjAPIResponse.Object = null;
+                    ObjAPIResponse.Result = false;
+                    ObjAPIResponse.Message = "Faild";
+                }
+
+
+
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            }
+            catch (Exception ex)
+            {
+                ObjAPIResponse.Object = null;
+                ObjAPIResponse.Result = false;
+                ObjAPIResponse.Message = "Please contact administration";
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            }
+            return resp;
+        }
+        */
 
         #endregion
 
@@ -1942,7 +2049,6 @@ namespace InstaOperatorOauthAPIS.Controllers
             return resp;
         }
 
-
         [HttpPost]
         [ActionName("postRecentCheckOutReport")]
         public HttpResponseMessage postRecentCheckOutReport(RecentCheckOutFilter objfilter)
@@ -1953,8 +2059,8 @@ namespace InstaOperatorOauthAPIS.Controllers
             try
             {
                 DALCustomerVehicleParkingLot dal_CustomerVehicleParkingLot = new DALCustomerVehicleParkingLot();
-               RecentCheckOutReport objReports  = dal_CustomerVehicleParkingLot.GetRecentCheckOutsReport(objfilter);
-                if (objReports!=null)
+                RecentCheckOutReport objReports = dal_CustomerVehicleParkingLot.GetRecentCheckOutsReport(objfilter);
+                if (objReports != null)
                 {
                     ObjAPIResponse.Object = (object)objReports;
                     ObjAPIResponse.Result = true;
@@ -1982,6 +2088,84 @@ namespace InstaOperatorOauthAPIS.Controllers
             return resp;
         }
 
+
+        [HttpGet]
+        [ActionName("getRecentCheckOutVehicleDetails")]
+        public HttpResponseMessage getRecentCheckOutVehicleDetails(int CustomerParkingSlotID)
+        {
+
+            ObjAPIResponse = new APIResponse();
+            var resp = new HttpResponseMessage(HttpStatusCode.OK);
+            try
+            {
+                DALCustomerVehicleParkingLot dal_CustomerVehicleParkingLot = new DALCustomerVehicleParkingLot();
+                List<CustomerParkingSlot> lstvehilcle = dal_CustomerVehicleParkingLot.GetRecentCheckOutsVehicleDetails(CustomerParkingSlotID);
+                if (lstvehilcle != null && lstvehilcle.Count > 0)
+                {
+                    ObjAPIResponse.Object = (object)lstvehilcle;
+                    ObjAPIResponse.Result = true;
+                    ObjAPIResponse.Message = "Success";
+                }
+                else
+                {
+                    ObjAPIResponse.Object = null;
+                    ObjAPIResponse.Result = false;
+                    ObjAPIResponse.Message = "No Records Found";
+                }
+
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            }
+            catch (Exception ex)
+            {
+                ObjAPIResponse.Object = null;
+                ObjAPIResponse.Result = false;
+                ObjAPIResponse.Message = "Please contact administration";
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            }
+            return resp;
+        }
+
+        [HttpPost]
+        [ActionName("postLotOccupancyReport")]
+        public HttpResponseMessage postLotOccupancyReport(User objSupervisor)
+        {
+
+            ObjAPIResponse = new APIResponse();
+            var resp = new HttpResponseMessage(HttpStatusCode.OK);
+            try
+            {
+                DALCustomerVehicleParkingLot dal_CustomerVehicleParkingLot = new DALCustomerVehicleParkingLot();
+                List<LocationLotOccupancyReport> objReports = dal_CustomerVehicleParkingLot.GetLotOccupancyReport(objSupervisor);
+                if (objReports != null)
+                {
+                    ObjAPIResponse.Object = (object)objReports;
+                    ObjAPIResponse.Result = true;
+                    ObjAPIResponse.Message = "Success";
+                }
+                else
+                {
+                    ObjAPIResponse.Object = null;
+                    ObjAPIResponse.Result = false;
+                    ObjAPIResponse.Message = "No Records Found";
+                }
+
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            }
+            catch (Exception ex)
+            {
+                ObjAPIResponse.Object = null;
+                ObjAPIResponse.Result = false;
+                ObjAPIResponse.Message = "Please contact administration";
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            }
+            return resp;
+        }
         #endregion
 
     }

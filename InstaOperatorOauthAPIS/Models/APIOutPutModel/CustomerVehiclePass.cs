@@ -16,6 +16,13 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
             LocationID = new Location();
             PassTypeID = new PassType();
             LocationID = new Location();
+            PassPurchaseLocationID = new LocationParkingLot();
+            SuperVisorID = new User();
+
+            //NFCCardSoldByID = new User();
+            //NFCCardSoldFromID = new ApplicationType();
+            //NFCCardPaymentID = new PaymentType();
+            //NFCCardActivatedByID = new User();
         }
         public int CustomerVehiclePassID { get; set; }
         public CustomerVehicle CustomerVehicleID { get; set; }
@@ -24,6 +31,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public PassPrice PassPriceID { get; set; }
         public PassType PassTypeID { get; }
         public Location LocationID { get; set; }
+        public LocationParkingLot PassPurchaseLocationID { get; set; }
         public bool IsMultiLot { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? ExpiryDate { get; set; }
@@ -39,9 +47,19 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public User CreatedBy { get; set; }
+        public User SuperVisorID { get; set; }
         public DateTime CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
+
+        //public User NFCCardSoldByID { get; set; }
+        //public ApplicationType NFCCardSoldFromID { get; set; }
+        //public PaymentType NFCCardPaymentID { get; set; }
+        //public DateTime NFCCardSoldDate { get; set; }
+        //public DateTime NFCCardActivateDate { get; set; }
+        //public User NFCCardActivatedByID { get; set; }
+
+
 
 
     }

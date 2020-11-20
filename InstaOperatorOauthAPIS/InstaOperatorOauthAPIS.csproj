@@ -256,6 +256,7 @@
     <Compile Include="Models\APIResponse\APIResponse.cs" />
     <Compile Include="Models\APIInputModel\UserLogin.cs" />
     <Compile Include="Models\ExceptionLog.cs" />
+    <Compile Include="Models\LocationLotOccupancyReport.cs" />
     <Compile Include="Models\LocationLotOperations.cs" />
     <Compile Include="Models\LotParkingReport.cs" />
     <Compile Include="Models\PasswordEncryptDecrypt.cs" />

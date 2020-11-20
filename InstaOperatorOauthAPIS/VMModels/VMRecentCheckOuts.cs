@@ -11,9 +11,10 @@ namespace InstaOperatorOauthAPIS.VMModels
             StatusID = new Status();
             Operator = new User();
             ApplicationTypeID = new ApplicationType();
+            VehicleTypeID = new VehicleType();
 
         }
-        public int CustomerParkingSlotHistoryID { get; set; }
+        public int CustomerParkingSlotID { get; set; }
 
         public string RegistrationNumber { get; set; }
         public DateTime? ExpectedStartTime { get; set; }
@@ -24,7 +25,7 @@ namespace InstaOperatorOauthAPIS.VMModels
         public decimal CashAmount { get; set; }
         public decimal EpayAmount { get; set; }
         public Status StatusID { get; set; }
-
+        public VehicleType VehicleTypeID { get; set; }
         public ApplicationType ApplicationTypeID { get; set; }
         public User Operator { get; set; }
         public string VehilceStatusColor { get; set; }

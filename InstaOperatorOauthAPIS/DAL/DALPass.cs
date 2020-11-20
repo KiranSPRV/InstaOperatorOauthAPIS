@@ -83,6 +83,8 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", ((objCustomerVehiclePass.CustomerVehicleID.VehicleTypeID.VehicleTypeCode == null || objCustomerVehiclePass.CustomerVehicleID.VehicleTypeID.VehicleTypeCode == "") ? (object)DBNull.Value : Convert.ToString(objCustomerVehiclePass.CustomerVehicleID.VehicleTypeID.VehicleTypeCode)));
                         sqlcmd_obj.Parameters.AddWithValue("@PrimaryLocationParkingLotID", ((objCustomerVehiclePass.PrimaryLocationParkingLotID.LocationParkingLotID == null || objCustomerVehiclePass.PrimaryLocationParkingLotID.LocationParkingLotID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PrimaryLocationParkingLotID.LocationParkingLotID)));
                         sqlcmd_obj.Parameters.AddWithValue("@LocationID", ((objCustomerVehiclePass.LocationID.LocationID == null || objCustomerVehiclePass.LocationID.LocationID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.LocationID.LocationID)));
+                        sqlcmd_obj.Parameters.AddWithValue("@PassPurchaseLocationID", ((objCustomerVehiclePass.PassPurchaseLocationID.LocationID.LocationID == null || objCustomerVehiclePass.PassPurchaseLocationID.LocationID.LocationID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PassPurchaseLocationID.LocationID.LocationID)));
+                        sqlcmd_obj.Parameters.AddWithValue("@PassPurchaseLocationLotID", ((objCustomerVehiclePass.PassPurchaseLocationID.LocationID == null || objCustomerVehiclePass.PassPurchaseLocationID.LocationParkingLotID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PassPurchaseLocationID.LocationParkingLotID)));
                         sqlcmd_obj.Parameters.AddWithValue("@PassPriceID", ((objCustomerVehiclePass.PassPriceID.PassPriceID == null || objCustomerVehiclePass.PassPriceID.PassPriceID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PassPriceID.PassPriceID)));
                         sqlcmd_obj.Parameters.AddWithValue("@PassTypeID", ((objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeID == null || objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeID)));
                         sqlcmd_obj.Parameters.AddWithValue("@PassTypeCode", ((objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeCode == null || objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeCode == "") ? (object)DBNull.Value : Convert.ToString(objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeCode)));
@@ -130,6 +132,8 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objResultVehicle.PassPriceID.PassTypeID.PassTypeName = Convert.ToString(resultdt.Rows[0]["PassTypeName"]);
                                 objResultVehicle.StartDate = resultdt.Rows[0]["StartDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["StartDate"]);
                                 objResultVehicle.ExpiryDate = resultdt.Rows[0]["ExpiryDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["ExpiryDate"]);
+                                objResultVehicle.CardAmount = resultdt.Rows[0]["CardAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["CardAmount"]);
+                                objResultVehicle.PassPriceID.NFCCardPrice = resultdt.Rows[i]["NFCCardPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[i]["NFCCardPrice"]);
                                 objResultVehicle.Amount = resultdt.Rows[0]["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["Amount"]);
                                 objResultVehicle.TotalAmount = resultdt.Rows[0]["TotalAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["TotalAmount"]);
 
@@ -140,7 +144,8 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objResultVehicle.PaymentTypeID.PaymentTypeID = resultdt.Rows[0]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["PaymentTypeID"]);
                                 objResultVehicle.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[0]["PaymentTypeName"]);
                                 objResultVehicle.CreatedBy.UserCode = Convert.ToString(resultdt.Rows[0]["UserCode"]);
-
+                                objResultVehicle.SuperVisorID.PhoneNumber = Convert.ToString(resultdt.Rows[0]["SUPERVISORPHONENUMBER"]);
+                                objResultVehicle.CreatedBy.LocationParkingLotID.LocationID.LocationName = Convert.ToString(resultdt.Rows[i]["PASSPURCHASELOCATION"]);
                             }
                         }
                     }
@@ -173,6 +178,8 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", ((objCustomerVehiclePass.CustomerVehicleID.VehicleTypeID.VehicleTypeCode == null || objCustomerVehiclePass.CustomerVehicleID.VehicleTypeID.VehicleTypeCode == "") ? (object)DBNull.Value : Convert.ToString(objCustomerVehiclePass.CustomerVehicleID.VehicleTypeID.VehicleTypeCode)));
                         sqlcmd_obj.Parameters.AddWithValue("@PrimaryLocationParkingLotID", ((objCustomerVehiclePass.PrimaryLocationParkingLotID.LocationParkingLotID == null || objCustomerVehiclePass.PrimaryLocationParkingLotID.LocationParkingLotID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PrimaryLocationParkingLotID.LocationParkingLotID)));
                         sqlcmd_obj.Parameters.AddWithValue("@LocationID", ((objCustomerVehiclePass.LocationID.LocationID == null || objCustomerVehiclePass.LocationID.LocationID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.LocationID.LocationID)));
+                        sqlcmd_obj.Parameters.AddWithValue("@PassPurchaseLocationID", ((objCustomerVehiclePass.PassPurchaseLocationID.LocationID.LocationID == null || objCustomerVehiclePass.PassPurchaseLocationID.LocationID.LocationID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PassPurchaseLocationID.LocationID.LocationID)));
+                        sqlcmd_obj.Parameters.AddWithValue("@PassPurchaseLocationLotID", ((objCustomerVehiclePass.PassPurchaseLocationID.LocationID == null || objCustomerVehiclePass.PassPurchaseLocationID.LocationParkingLotID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PassPurchaseLocationID.LocationParkingLotID)));
                         sqlcmd_obj.Parameters.AddWithValue("@PassPriceID", ((objCustomerVehiclePass.PassPriceID.PassPriceID == null || objCustomerVehiclePass.PassPriceID.PassPriceID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PassPriceID.PassPriceID)));
                         sqlcmd_obj.Parameters.AddWithValue("@PassTypeID", ((objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeID == null || objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeID == 0) ? (object)DBNull.Value : Convert.ToInt32(objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeID)));
                         sqlcmd_obj.Parameters.AddWithValue("@PassTypeCode", ((objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeCode == null || objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeCode == "") ? (object)DBNull.Value : Convert.ToString(objCustomerVehiclePass.PassPriceID.PassTypeID.PassTypeCode)));
@@ -405,7 +412,8 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objResultVehicle.PaymentTypeID.PaymentTypeID = resultdt.Rows[i]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["PaymentTypeID"]);
                                 objResultVehicle.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[i]["PaymentTypeName"]);
                                 objResultVehicle.CreatedBy.UserCode = Convert.ToString(resultdt.Rows[i]["UserCode"]);
-
+                                objResultVehicle.CreatedBy.LocationParkingLotID.LocationID.LocationName = Convert.ToString(resultdt.Rows[i]["PASSPURCHASELOCATION"]);
+                                objResultVehicle.SuperVisorID.PhoneNumber = Convert.ToString(resultdt.Rows[i]["SUPERVISORPHONENUMBER"]);
                                 lstResultVehicle.Add(objResultVehicle);
 
                             }
@@ -645,5 +653,42 @@ namespace InstaOperatorOauthAPIS.DAL
             return objResultVehicle;
         }
 
+        /*
+        #region NFC Card Purchase
+         public int SaveCustomerVehiclePassNFCCard(CustomerVehiclePass objPass)
+        {
+            int resultID=0;
+            try
+            {
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_SaveCustomerVehiclePassNewNFCCard", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@CustomerVehiclePassID", ((objPass.CustomerVehiclePassID == null || objPass.CustomerVehiclePassID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.CustomerVehiclePassID)));
+                        sqlcmd_obj.Parameters.AddWithValue("@CardNumber", ((objPass.CardNumber == null || objPass.CardNumber == "") ? (object)DBNull.Value : Convert.ToString(objPass.CardNumber)));
+                        sqlcmd_obj.Parameters.AddWithValue("@CardAmount", ((objPass.CardAmount == null || objPass.CardAmount == 0) ? (object)DBNull.Value : Convert.ToDecimal(objPass.CardAmount)));
+                        sqlcmd_obj.Parameters.AddWithValue("@BarCode", (objPass.BarCode == null ? (object)DBNull.Value : objPass.BarCode));
+                        sqlcmd_obj.Parameters.AddWithValue("@PaymentTypeCode", (objPass.NFCCardPaymentID.PaymentTypeCode == null ? (object)DBNull.Value : objPass.NFCCardPaymentID.PaymentTypeCode));
+                        sqlcmd_obj.Parameters.AddWithValue("@ApplicationTypeCode", (objPass.NFCCardSoldFromID.ApplicationTypeCode == null ? (object)DBNull.Value : objPass.NFCCardSoldFromID.ApplicationTypeCode));
+                        sqlcmd_obj.Parameters.AddWithValue("@UserID", ((objPass.NFCCardSoldByID.UserID == null || objPass.CreatedBy.UserID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.NFCCardSoldByID.UserID)));
+                        sqlconn_obj.Open();
+                        
+                        if(sqlcmd_obj.ExecuteNonQuery()>0)
+                        {
+                            resultID = objPass.CustomerVehiclePassID;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALPass", "Proc: " + "OPAPP_PROC_SaveCustomerVehiclePassNewNFCCard", "SaveCustomerVehiclePassNFCCard");
+            }
+            return resultID;
+        }
+       
+        #endregion
+        */
     }
 }

@@ -52,6 +52,8 @@ namespace InstaOperatorOauthAPIS.DAL
                             objcheckOut.LocationParkingLotID.LocationID.LocationName = Convert.ToString(resultdt.Rows[0]["LocationName"]);
                             objcheckOut.LocationParkingLotID.LocationParkingLotID = resultdt.Rows[0]["LocationParkingLotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["LocationParkingLotID"]);
                             objcheckOut.LocationParkingLotID.LocationParkingLotName = Convert.ToString(resultdt.Rows[0]["LocationParkingLotName"]);
+                            objcheckOut.LocationParkingLotID.LotCloseTime = Convert.ToString(resultdt.Rows[0]["LotCloseTime"]);
+                            objcheckOut.LocationParkingLotID.LotOpenTime = Convert.ToString(resultdt.Rows[0]["LotOpenTime"]);
                             objcheckOut.LocationParkingLotID.ParkingBayID.ParkingBayID = resultdt.Rows[0]["ParkingBayID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["ParkingBayID"]);
                             objcheckOut.LocationParkingLotID.ParkingBayID.ParkingBayName = Convert.ToString(resultdt.Rows[0]["ParkingBayName"]);
                             objcheckOut.LocationParkingLotID.ParkingBayID.ParkingBayRange = Convert.ToString(resultdt.Rows[0]["ParkingBayRange"]);
@@ -75,7 +77,12 @@ namespace InstaOperatorOauthAPIS.DAL
                             objcheckOut.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
                             objcheckOut.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
                             objcheckOut.IsClamp = resultdt.Rows[0]["IsClamp"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IsClamp"]);
-                            objcheckOut.ExtendAmount = resultdt.Rows[0]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ExtendAmount"]); 
+                            objcheckOut.ExtendAmount = resultdt.Rows[0]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ExtendAmount"]);
+                            objcheckOut.SuperVisorID.UserCode = resultdt.Rows[0]["SUPERVISORCODE"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["SUPERVISORCODE"]);
+                            objcheckOut.SuperVisorID.PhoneNumber = resultdt.Rows[0]["SUPERVISORPHONENUMBER"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["SUPERVISORPHONENUMBER"]);
+                            objcheckOut.ApplicationTypeID.ApplicationTypeCode = resultdt.Rows[0]["ApplicationTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["ApplicationTypeCode"]);
+                            objcheckOut.ApplicationTypeID.ApplicationTypeName = resultdt.Rows[0]["ApplicationTypeName"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["ApplicationTypeName"]);
+                            
                             PushNotification pushNotification = new PushNotification();
                             NotificationContent notificationContent = new NotificationContent();
                             notificationContent.DeviceID = Convert.ToString(resultdt.Rows[0]["DeviceID"]);

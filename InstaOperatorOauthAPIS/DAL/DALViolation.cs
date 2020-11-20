@@ -133,7 +133,6 @@ namespace InstaOperatorOauthAPIS.DAL
             }
             return objViolationAndClamp;
         }
-       
 
     }
 }

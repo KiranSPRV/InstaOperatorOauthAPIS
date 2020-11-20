@@ -188,6 +188,8 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objLocationParkingLot.LocationID.LocationID = Convert.ToInt32(resultdt.Rows[i]["LocationID"]);
                                 objLocationParkingLot.LocationID.LocationName = Convert.ToString(resultdt.Rows[i]["LocationName"]);
                                 objLocationParkingLot.IsActive = resultdt.Rows[i]["IsHoliday"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsHoliday"]);
+                                objLocationParkingLot.LotOpenTime = resultdt.Rows[i]["LotOpenTime"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["LotOpenTime"]);
+                                objLocationParkingLot.LotCloseTime = resultdt.Rows[i]["LOTCLOSETIME"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["LOTCLOSETIME"]);
                                 lstLocationParkingLot.Add(objLocationParkingLot);
                             }
                         }
@@ -435,8 +437,57 @@ namespace InstaOperatorOauthAPIS.DAL
                     {
 
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                       
                         sqlcmd_obj.Parameters.AddWithValue("@LocationID", (objLocationParkingLot.LocationID.LocationID==null|| objLocationParkingLot.LocationID.LocationID == 0)?(object)DBNull.Value : objLocationParkingLot.LocationID.LocationID);
                         sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", (objLocationParkingLot.LocationParkingLotID == null || objLocationParkingLot.LocationParkingLotID == 0) ? (object)DBNull.Value : objLocationParkingLot.LocationParkingLotID);
+                        sqlconn_obj.Open();
+                        SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
+                        DataTable resultdt = new DataTable();
+                        sqldap.Fill(resultdt);
+                        if (resultdt.Rows.Count > 0)
+                        {
+                            for (var i = 0; i < resultdt.Rows.Count; i++)
+                            {
+                                User objUser = new User();
+                                objUser.UserName = Convert.ToString(resultdt.Rows[i]["UserName"]);
+                                objUser.UserCode = Convert.ToString(resultdt.Rows[i]["UserName"]) + "-" + Convert.ToString(resultdt.Rows[i]["UserCode"]);
+                                objUser.UserID = resultdt.Rows[i]["UserID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["UserID"]);
+                                objUser.UserTypeID.UserTypeID = resultdt.Rows[i]["UserTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["UserTypeID"]);
+                                objUser.UserTypeID.UserTypeName = Convert.ToString(resultdt.Rows[i]["UserTypeName"]);
+                                lstOperator.Add(objUser);
+                            }
+
+
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALUserLoginVerification", "Proc: " + "OPAPP_PROC_GetSupervisorOperators", "GetSuperVisorOperators");
+                throw;
+
+            }
+            return lstOperator;
+
+        }
+        public List<User> LocationLotActiveOperartors(User objUserLocationParkingLot)
+        {
+
+            List<User> lstOperator = new List<User>();
+
+            try
+            {
+
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_GetLocationLotActiveOperartors", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@UserID", (objUserLocationParkingLot.UserID == null || objUserLocationParkingLot.UserID == 0) ? (object)DBNull.Value : objUserLocationParkingLot.UserID);
+                        sqlcmd_obj.Parameters.AddWithValue("@LocationID", (objUserLocationParkingLot.LocationParkingLotID.LocationID.LocationID == null || objUserLocationParkingLot.LocationParkingLotID.LocationID.LocationID == 0) ? (object)DBNull.Value : objUserLocationParkingLot.LocationParkingLotID.LocationID.LocationID);
+                        sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", (objUserLocationParkingLot.LocationParkingLotID.LocationParkingLotID == null || objUserLocationParkingLot.LocationParkingLotID.LocationParkingLotID == 0) ? (object)DBNull.Value : objUserLocationParkingLot.LocationParkingLotID.LocationParkingLotID);
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
                         DataTable resultdt = new DataTable();

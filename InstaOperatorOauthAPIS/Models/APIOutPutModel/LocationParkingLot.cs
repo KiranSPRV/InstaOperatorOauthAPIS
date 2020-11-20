@@ -27,5 +27,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public DateTime CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
+        public string LotOpenTime { get; set; }
+        public string LotCloseTime { get; set; }
     }
 }

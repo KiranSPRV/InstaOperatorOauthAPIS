@@ -16,6 +16,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
             FOCReasonID = new ViolationReason();
             StatusID = new Status();
             ParkingBayID = new ParkingBay();
+            SuperVisorID = new User();
 
         }
         public int CustomerParkingSlotID { get; set; }
@@ -47,6 +48,10 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public DateTime UpdatedOn { get; set; }
         public byte[] VehicleParkingImage { get; set; }
         public byte[] GovernmentVehicleImage { get; set; }
+
+
+        public User SuperVisorID { get; set; }
+
         
         public decimal ViolationFees { get; set; }
         public decimal ExtendAmount { get; set; }
