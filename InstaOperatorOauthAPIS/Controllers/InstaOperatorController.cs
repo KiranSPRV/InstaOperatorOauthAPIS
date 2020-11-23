@@ -711,7 +711,7 @@ namespace InstaOperatorOauthAPIS.Controllers
             {
                 DALCheckIn dal_CheckIn = new DALCheckIn();
                 CustomerVehiclePass objCustomerpass = dal_CheckIn.GetNFCCardVehiclePassDetails(obj.NFCCardNumber);
-                
+
                 if (objCustomerpass.CustomerVehiclePassID != 0)
                 {
                     string resultmsg = dal_CheckIn.VerifyCustomerNFCCardExpiry(objCustomerpass, obj.LocationID);
@@ -1430,6 +1430,45 @@ namespace InstaOperatorOauthAPIS.Controllers
             return resp;
         }
 
+        [HttpGet]
+        [ActionName("getVehiclePassDetailsByNFC")]
+        public HttpResponseMessage getVehiclePassDetailsByNFC(string NFCCardNumber)
+        {
+
+            ObjAPIResponse = new APIResponse();
+            var resp = new HttpResponseMessage(HttpStatusCode.OK);
+            try
+            {
+                DALCheckIn dal_CheckIn = new DALCheckIn();
+                CustomerVehiclePass objCustomerpass = dal_CheckIn.GetNFCCardVehiclePassDetails(NFCCardNumber);
+              
+                if (objCustomerpass.CustomerVehiclePassID!=0)
+                {
+                    ObjAPIResponse.Object = (object)objCustomerpass;
+                    ObjAPIResponse.Result = true;
+                    ObjAPIResponse.Message = "Success";
+                }
+                else
+                {
+                    ObjAPIResponse.Object = (object)null;
+                    ObjAPIResponse.Result = false;
+                    ObjAPIResponse.Message = "Fail";
+                }
+
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            }
+            catch (Exception ex)
+            {
+                ObjAPIResponse.Object = null;
+                ObjAPIResponse.Result = false;
+                ObjAPIResponse.Message = "Please contact administration";
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            }
+            return resp;
+        }
 
         [HttpPost]
         [ActionName("postOPAPPPassPriceDetails")]
@@ -1705,7 +1744,7 @@ namespace InstaOperatorOauthAPIS.Controllers
             return resp;
         }
 
-        /*
+
         [HttpPost]
         [ActionName("postSaveCustomerVehiclePassNewNFCCard")]
         public HttpResponseMessage postSaveCustomerVehiclePassNewNFCCard(CustomerVehiclePass objCustomerVehiclePass)
@@ -1717,9 +1756,9 @@ namespace InstaOperatorOauthAPIS.Controllers
             {
                 DALPass dal_Pass = new DALPass();
                 int CustomerVehiclePassID = dal_Pass.SaveCustomerVehiclePassNFCCard(objCustomerVehiclePass);
-                if (CustomerVehiclePassID>0)
+                if (CustomerVehiclePassID > 0)
                 {
-                    ObjAPIResponse.Object =(object)dal_Pass.GetCustomerVehiclePassDetails(objCustomerVehiclePass);
+                    ObjAPIResponse.Object = (object)dal_Pass.GetCustomerVehiclePassDetails(objCustomerVehiclePass);
                     ObjAPIResponse.Result = true;
                     ObjAPIResponse.Message = "Vehicle alreday has pass";
                 }
@@ -1746,7 +1785,7 @@ namespace InstaOperatorOauthAPIS.Controllers
             }
             return resp;
         }
-        */
+
 
         #endregion
 
