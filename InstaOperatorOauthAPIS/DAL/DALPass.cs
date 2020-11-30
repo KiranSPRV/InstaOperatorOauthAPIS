@@ -642,7 +642,8 @@ namespace InstaOperatorOauthAPIS.DAL
                             objResultVehicle.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[0]["PaymentTypeName"]);
                             objResultVehicle.CreatedBy.UserCode = Convert.ToString(resultdt.Rows[0]["UserCode"]);
                             objResultVehicle.CreatedBy.LocationParkingLotID.LocationID.LocationName = Convert.ToString(resultdt.Rows[0]["PASSPURCHASELOCATION"]);
-
+                            objResultVehicle.SuperVisorID.PhoneNumber = Convert.ToString(resultdt.Rows[0]["SUPERVISORPHONENUMBER"]);
+                            objResultVehicle.NFCCardPaymentID.PaymentTypeCode = Convert.ToString(resultdt.Rows[0]["NFCPaymentType"]);
                         }
                     }
                 }
@@ -714,6 +715,8 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@BarCode", (objPass.BarCode == null ? (object)DBNull.Value : objPass.BarCode));
                         sqlcmd_obj.Parameters.AddWithValue("@PaymentTypeCode", (objPass.NFCCardPaymentID.PaymentTypeCode == null ? (object)DBNull.Value : objPass.NFCCardPaymentID.PaymentTypeCode));
                         sqlcmd_obj.Parameters.AddWithValue("@ApplicationTypeCode", (objPass.NFCCardSoldFromID.ApplicationTypeCode == null ? (object)DBNull.Value : objPass.NFCCardSoldFromID.ApplicationTypeCode));
+                        sqlcmd_obj.Parameters.AddWithValue("@LocationID", ((objPass.NFCSoldLotID.LocationID.LocationID == null || objPass.NFCSoldLotID.LocationID.LocationID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.NFCSoldLotID.LocationID.LocationID)));
+                        sqlcmd_obj.Parameters.AddWithValue("@LocationLotID", ((objPass.NFCSoldLotID.LocationParkingLotID == null || objPass.NFCSoldLotID.LocationParkingLotID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.NFCSoldLotID.LocationParkingLotID)));
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", ((objPass.NFCCardSoldByID.UserID == null || objPass.NFCCardSoldByID.UserID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.NFCCardSoldByID.UserID)));
                         sqlconn_obj.Open();
 

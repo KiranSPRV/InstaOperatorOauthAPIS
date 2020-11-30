@@ -502,7 +502,7 @@ namespace InstaOperatorOauthAPIS.DAL
                                 CustomerParkingSlot objCustomerParkingSlot = new CustomerParkingSlot();
                                 objCustomerParkingSlot.CustomerParkingSlotID = resultdt.Rows[i]["CustomerParkingSlotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["CustomerParkingSlotID"]);
                                 objCustomerParkingSlot.CustomerID.CustomerID = resultdt.Rows[i]["CustomerID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["CustomerID"]);
-                                objCustomerParkingSlot.CustomerID.Name = Convert.ToString(resultdt.Rows[i]["Name"]);
+                                objCustomerParkingSlot.UserCode = Convert.ToString(resultdt.Rows[i]["UserCode"]);
                                 objCustomerParkingSlot.LocationParkingLotID.LocationID.LocationID = resultdt.Rows[i]["LocationID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["LocationID"]);
                                 objCustomerParkingSlot.LocationParkingLotID.LocationID.LocationName = Convert.ToString(resultdt.Rows[i]["LocationName"]);
                                 objCustomerParkingSlot.LocationParkingLotID.LocationParkingLotID = resultdt.Rows[i]["LocationParkingLotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["LocationParkingLotID"]);
@@ -531,13 +531,14 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objCustomerParkingSlot.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[i]["PaymentTypeName"]);
                                 objCustomerParkingSlot.CreatedBy = resultdt.Rows[i]["UserID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["UserID"]);
                                 objCustomerParkingSlot.CreatedByName = Convert.ToString(resultdt.Rows[i]["UserName"]);
+                                objCustomerParkingSlot.SuperVisorID.PhoneNumber = Convert.ToString(resultdt.Rows[i]["SUPERVISORPHONENUMBER"]);
                                 //objCustomerParkingSlot.Amount = resultdt.Rows[i]["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["Amount"]);
                                 objCustomerParkingSlot.PaidAmount = resultdt.Rows[i]["PaidAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["PaidAmount"]);
                                 objCustomerParkingSlot.DueAmount = resultdt.Rows[i]["DueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["DueAmount"]);
                                 objCustomerParkingSlot.IsWarning = resultdt.Rows[i]["IsWarning"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsWarning"]);
                                 objCustomerParkingSlot.IsClamp = resultdt.Rows[i]["IsClamp"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsClamp"]);
                                 objCustomerParkingSlot.ClampFees = resultdt.Rows[i]["ClampFee"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["ClampFee"]);
-
+                                objCustomerParkingSlot.ViolationFees = resultdt.Rows[i]["ViolationFees"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["ViolationFees"]);
 
                                 //Total Parking Amount
                                 if (Convert.ToString(resultdt.Rows[i]["StatusCode"]) != "FOC")
@@ -958,6 +959,7 @@ namespace InstaOperatorOauthAPIS.DAL
                                     objVMCheckOut.VehicleTypeID.VehicleTypeID = Convert.ToInt32(dtRecentCheckOuts.Rows[i]["VehicleTypeID"]);
                                     objVMCheckOut.VehicleTypeID.VehicleTypeCode = Convert.ToString(dtRecentCheckOuts.Rows[i]["VehicleTypeCode"]);
                                     objVMCheckOut.VehicleTypeID.VehicleTypeName = Convert.ToString(dtRecentCheckOuts.Rows[i]["VehicleTypeName"]);
+                                    objVMCheckOut.ApplicationTypeID.ApplicationTypeColor = "#3293fa";
                                     if (Convert.ToString(dtRecentCheckOuts.Rows[i]["VehicleTypeCode"]).ToUpper() == "2W".ToUpper())
                                     {
                                         objVMCheckOut.VehicleTypeID.VehicleImage = "bike_black.png";
@@ -967,10 +969,11 @@ namespace InstaOperatorOauthAPIS.DAL
                                         objVMCheckOut.VehicleTypeID.VehicleImage = "car_black.png";
                                     }
                                     objVMCheckOut.VehilceStatusColor = "#010101";
-                                    if (Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]) == "V")
+                                    if (Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]) == "V" || Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]) == "FOC")
                                     {
                                         objVMCheckOut.VehilceStatusColor = "#ff0000";
                                         objVMCheckOut.ApplicationTypeID.ApplicationTypeCode = "V";
+                                        objVMCheckOut.ApplicationTypeID.ApplicationTypeColor = "#ff0000";
                                     }
                                     objCheckOutReport.RecentCheckOutID.Add(objVMCheckOut);
                                 }
@@ -1123,10 +1126,11 @@ namespace InstaOperatorOauthAPIS.DAL
         #endregion
 
         #region Lot Occupancy
-        public List<LocationLotOccupancyReport> GetLotOccupancyReport(User objlotuser)
+        public VMLocationLotOccupancyReport GetLotOccupancyReport(User objlotuser)
         {
             List<LocationLotOccupancyReport> lstLotOccupancyReport = new List<LocationLotOccupancyReport>();
-            DataTable dt = new DataTable();
+            VMLocationLotOccupancyReport objVMLocationLotOccupancyReport = new VMLocationLotOccupancyReport();
+            
             try
             {
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
@@ -1141,19 +1145,42 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", objlotuser.UserID == 0 ? (object)DBNull.Value : objlotuser.UserID);
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
-                        sqldap.Fill(dt);
-                        if (dt.Rows.Count > 0)
+                        DataSet ds = new DataSet();
+                        sqldap.Fill(ds);
+                        if (ds.Tables.Count > 0)
                         {
-
-
-                            for (var i = 0; i < dt.Rows.Count; i++)
+                            DataTable dtLotOccupancy = new DataTable();
+                            DataTable dtSummary = new DataTable();
+                            dtLotOccupancy = ds.Tables[0];
+                            dtSummary = ds.Tables[1];
+                            if(dtLotOccupancy.Rows.Count>0)
                             {
-                                LocationLotOccupancyReport objoccupancy = new LocationLotOccupancyReport();
-                                objoccupancy.ChekcInDuration = dt.Rows[i]["Duration"] == DBNull.Value ? "0" : Convert.ToString(dt.Rows[i]["Duration"]);
-                                objoccupancy.TwoWheeler = dt.Rows[i]["2W"] == DBNull.Value ? "" : Convert.ToString(dt.Rows[i]["2W"]);
-                                objoccupancy.FourWheeler = dt.Rows[i]["4W"] == DBNull.Value ? "" : Convert.ToString(dt.Rows[i]["4W"]);
-                                lstLotOccupancyReport.Add(objoccupancy);
+                                for (var i = 0; i < dtLotOccupancy.Rows.Count; i++)
+                                {
+                                    LocationLotOccupancyReport objoccupancy = new LocationLotOccupancyReport();
+                                    objoccupancy.ChekcInDuration = dtLotOccupancy.Rows[i]["Duration"] == DBNull.Value ? "0" : Convert.ToString(dtLotOccupancy.Rows[i]["Duration"]);
+                                    objoccupancy.TwoWheeler = dtLotOccupancy.Rows[i]["2W"] == DBNull.Value ? "" : Convert.ToString(dtLotOccupancy.Rows[i]["2W"]);
+                                    objoccupancy.FourWheeler = dtLotOccupancy.Rows[i]["4W"] == DBNull.Value ? "" : Convert.ToString(dtLotOccupancy.Rows[i]["4W"]);
+                                    lstLotOccupancyReport.Add(objoccupancy);
+                                }
+                                if(dtSummary.Rows.Count>0)
+                                {
+                                    LocationLotOccupancyReport objtoalSum = new LocationLotOccupancyReport();
+                                    objtoalSum.ChekcInDuration = "Total";
+                                    objtoalSum.TwoWheeler = dtSummary.Rows[0]["TOTAL2W"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["TOTAL2W"]);
+                                    objtoalSum.FourWheeler = dtSummary.Rows[0]["TOTAL4W"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["TOTAL4W"]);
+                                    lstLotOccupancyReport.Add(objtoalSum);
+
+                                    objVMLocationLotOccupancyReport.LocationLotOccupancyReportID = lstLotOccupancyReport;
+                                    objVMLocationLotOccupancyReport.TotalTwoWheelerPercentage = dtSummary.Rows[0]["TwoWheelerPercentage"] == DBNull.Value ? "0" + " (%)" : Convert.ToString(dtSummary.Rows[0]["TwoWheelerPercentage"]) +" (%)";
+                                    objVMLocationLotOccupancyReport.TotalFourWheelerPercentage = dtSummary.Rows[0]["FourWheelerPercentage"] == DBNull.Value ? "0"+" (%)" : Convert.ToString(dtSummary.Rows[0]["FourWheelerPercentage"]) + " (%)";
+
+                                }
+
+                                
                             }
+                            
+                            
 
 
                         }
@@ -1165,7 +1192,7 @@ namespace InstaOperatorOauthAPIS.DAL
             {
                 objExceptionlog.InsertException("WebAPI", ex.Message, "OPAPP_PROC_Report_GetLotOccupancy", "Proc: " + "OPAPP_PROC_GetVehicleParkingHistory", "GetLotOccupancyReport");
             }
-            return lstLotOccupancyReport;
+            return objVMLocationLotOccupancyReport;
 
         }
         #endregion

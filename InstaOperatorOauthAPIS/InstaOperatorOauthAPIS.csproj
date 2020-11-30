@@ -270,6 +270,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="VMModels\LocationLotParkingReport.cs" />
+    <Compile Include="VMModels\VMLocationLotOccupancyReport.cs" />
     <Compile Include="VMModels\VMLocationLotParkedVehicles.cs" />
     <Compile Include="VMModels\VMLocationLotParkingReport.cs" />
     <Compile Include="VMModels\VMLocationLotPassReport.cs" />

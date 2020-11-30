@@ -23,6 +23,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
             NFCCardSoldFromID = new ApplicationType();
             NFCCardPaymentID = new PaymentType();
             NFCCardActivatedByID = new User();
+            NFCSoldLotID = new LocationParkingLot();
         }
         public int CustomerVehiclePassID { get; set; }
         public CustomerVehicle CustomerVehicleID { get; set; }
@@ -58,8 +59,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public DateTime NFCCardSoldDate { get; set; }
         public DateTime NFCCardActivateDate { get; set; }
         public User NFCCardActivatedByID { get; set; }
-
-
+        public LocationParkingLot NFCSoldLotID { get; set; }
 
 
     }

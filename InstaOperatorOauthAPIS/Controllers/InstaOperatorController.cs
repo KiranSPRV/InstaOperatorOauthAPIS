@@ -2177,7 +2177,7 @@ namespace InstaOperatorOauthAPIS.Controllers
             try
             {
                 DALCustomerVehicleParkingLot dal_CustomerVehicleParkingLot = new DALCustomerVehicleParkingLot();
-                List<LocationLotOccupancyReport> objReports = dal_CustomerVehicleParkingLot.GetLotOccupancyReport(objSupervisor);
+                VMLocationLotOccupancyReport objReports = dal_CustomerVehicleParkingLot.GetLotOccupancyReport(objSupervisor);
                 if (objReports != null)
                 {
                     ObjAPIResponse.Object = (object)objReports;

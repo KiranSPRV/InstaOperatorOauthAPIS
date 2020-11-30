@@ -11,6 +11,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         {
             UserTypeID = new UserType();
             LocationParkingLotID = new LocationParkingLot();
+            
         }
         public int UserID { get; set; }
         public UserType UserTypeID { get; set; }
@@ -29,7 +30,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public DateTime? LoginTime { get; set; }
         public DateTime? LogoutTime { get; set; }
         public string LoginDeviceID { get; set; }
-
+      
 
     }
 }
