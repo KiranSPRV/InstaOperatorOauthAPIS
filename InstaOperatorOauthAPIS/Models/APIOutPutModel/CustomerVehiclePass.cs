@@ -60,7 +60,9 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public DateTime NFCCardActivateDate { get; set; }
         public User NFCCardActivatedByID { get; set; }
         public LocationParkingLot NFCSoldLotID { get; set; }
-
-
+        public bool IsActivateNFCCard { get; set; }
+        public bool IsNewNFC { get; set; }
+        public bool IsRenewPass { get; set; }
+        public string GSTNumber { get; set; }
     }
 }

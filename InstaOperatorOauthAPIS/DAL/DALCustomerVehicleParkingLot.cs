@@ -9,7 +9,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Web;
+using System.Web.Hosting;
 
 namespace InstaOperatorOauthAPIS.DAL
 {
@@ -152,7 +155,58 @@ namespace InstaOperatorOauthAPIS.DAL
                                             objCustomerParkingSlot.BayNumberColor = "#008000";
                                             objCustomerParkingSlot.VehicleStatusColor = "#008000";
                                             objCustomerParkingSlot.ApplicationTypeCode = "G";
+                                        }
+                                    }
+                                    if (Convert.ToString(dtParkedVehicles.Rows[i]["VehicleTypeCode"]) == "3W")
+                                    {
+                                        if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "C")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "ThreeW_red.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#FF0000";
+                                            objCustomerParkingSlot.ApplicationTypeCode = "V";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#FF0000";
+                                            objCustomerParkingSlot.VehicleClampImage = "clamp_small.png";
+                                        }
+                                        else if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "V")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "ThreeW_red.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#FF0000";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#FF0000";
+                                            objCustomerParkingSlot.ApplicationTypeCode = "V";
+                                            if (isClamp)
+                                            {
+                                                objCustomerParkingSlot.VehicleClampImage = "clamp_small.png";
+                                            }
+                                        }
+                                        else if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "O")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "ThreeW_orange.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#F39C12";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#F39C12";
+                                            objCustomerParkingSlot.VehicleClampImage = "clock_orange.png";
+                                            if (isClamp)
+                                            {
+                                                objCustomerParkingSlot.VehicleClampImage = "clamp.png";
+                                            }
 
+                                        }
+                                        else if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "CHKIN")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "ThreeW_black.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#444444";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#3293fa";
+                                            if (isClamp)
+                                            {
+                                                objCustomerParkingSlot.VehicleClampImage = "clamp.png";
+                                            }
+
+                                        }
+                                        else if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "G")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "ThreeW_green.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#008000";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#008000";
+                                            objCustomerParkingSlot.ApplicationTypeCode = "G";
                                         }
                                     }
                                     if (Convert.ToString(dtParkedVehicles.Rows[i]["VehicleTypeCode"]) == "4W")
@@ -209,6 +263,58 @@ namespace InstaOperatorOauthAPIS.DAL
 
                                         }
                                     }
+                                    if (Convert.ToString(dtParkedVehicles.Rows[i]["VehicleTypeCode"]) == "HW")
+                                    {
+                                        if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "C")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "hv_red.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#FF0000";
+                                            objCustomerParkingSlot.ApplicationTypeCode = "V";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#FF0000";
+                                            objCustomerParkingSlot.VehicleClampImage = "clamp_small.png";
+                                        }
+                                        else if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "V")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "hv_red.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#FF0000";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#FF0000";
+                                            objCustomerParkingSlot.ApplicationTypeCode = "V";
+                                            if (isClamp)
+                                            {
+                                                objCustomerParkingSlot.VehicleClampImage = "clamp_small.png";
+                                            }
+                                        }
+                                        else if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "O")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "hv_orange.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#F39C12";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#F39C12";
+                                            objCustomerParkingSlot.VehicleClampImage = "clock_orange.png";
+                                            if (isClamp)
+                                            {
+                                                objCustomerParkingSlot.VehicleClampImage = "clamp.png";
+                                            }
+
+                                        }
+                                        else if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "CHKIN")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "hv_black.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#444444";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#3293fa";
+                                            if (isClamp)
+                                            {
+                                                objCustomerParkingSlot.VehicleClampImage = "clamp.png";
+                                            }
+
+                                        }
+                                        else if (Convert.ToString(dtParkedVehicles.Rows[i]["StatusCode"]) == "G")
+                                        {
+                                            objCustomerParkingSlot.VehicleImage = "hv_green.png";
+                                            objCustomerParkingSlot.BayNumberColor = "#008000";
+                                            objCustomerParkingSlot.VehicleStatusColor = "#008000";
+                                            objCustomerParkingSlot.ApplicationTypeCode = "G";
+                                        }
+                                    }
                                     lstCustomerParkingSlot.Add(objCustomerParkingSlot);
                                 }
                                 objVMLocationLotParkedVehicles.CustomerParkingSlotID = lstCustomerParkingSlot;
@@ -221,9 +327,17 @@ namespace InstaOperatorOauthAPIS.DAL
                                     {
                                         objVMLocationLotParkedVehicles.TotalTwoWheeler = dtTotalVehicles.Rows[j]["Total"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehicles.Rows[j]["Total"]);
                                     }
+                                    if (Convert.ToString(dtTotalVehicles.Rows[j]["VehicleTypeCode"]) == "3W")
+                                    {
+                                        objVMLocationLotParkedVehicles.TotalThreeWheeler = dtTotalVehicles.Rows[j]["Total"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehicles.Rows[j]["Total"]);
+                                    }
                                     if (Convert.ToString(dtTotalVehicles.Rows[j]["VehicleTypeCode"]) == "4W")
                                     {
                                         objVMLocationLotParkedVehicles.TotalFourWheeler = dtTotalVehicles.Rows[j]["Total"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehicles.Rows[j]["Total"]);
+                                    }
+                                    if (Convert.ToString(dtTotalVehicles.Rows[j]["VehicleTypeCode"]) == "HW")
+                                    {
+                                        objVMLocationLotParkedVehicles.TotalHVWheeler = dtTotalVehicles.Rows[j]["Total"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehicles.Rows[j]["Total"]);
                                     }
                                 }
                             }
@@ -235,10 +349,19 @@ namespace InstaOperatorOauthAPIS.DAL
                                     {
                                         objVMLocationLotParkedVehicles.TotalOutTwoWheeler = dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"]);
                                     }
+                                    if (Convert.ToString(dtTotalVehicles.Rows[j]["VehicleTypeCode"]) == "3W")
+                                    {
+                                        objVMLocationLotParkedVehicles.TotalOutThreeWheeler = dtTotalVehicles.Rows[j]["TotalOUT"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehicles.Rows[j]["TotalOUT"]);
+                                    }
                                     if (Convert.ToString(dtTotalVehiclesCheckOut.Rows[j]["VehicleTypeCode"]) == "4W")
                                     {
                                         objVMLocationLotParkedVehicles.TotalOutFourWheeler = dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"]);
                                     }
+                                    if (Convert.ToString(dtTotalVehiclesCheckOut.Rows[j]["VehicleTypeCode"]) == "HW")
+                                    {
+                                        objVMLocationLotParkedVehicles.TotalOutHVWheeler = dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"]);
+                                    }
+                                    
                                 }
                             }
                         }
@@ -288,6 +411,8 @@ namespace InstaOperatorOauthAPIS.DAL
                             objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = resultdt.Rows[0]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
                             objCustomerParkingSlot.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
                             objCustomerParkingSlot.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[0]["VehicleTypeName"]);
+                           
+                            
                             objCustomerParkingSlot.Duration = Convert.ToString(resultdt.Rows[0]["Duration"]);
                             objCustomerParkingSlot.PaymentTypeID.PaymentTypeID = resultdt.Rows[0]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["PaymentTypeID"]);
                             objCustomerParkingSlot.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[0]["PaymentTypeName"]);
@@ -301,8 +426,6 @@ namespace InstaOperatorOauthAPIS.DAL
                             objCustomerParkingSlot.PaidAmount = resultdt.Rows[0]["PaidAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["PaidAmount"]);
                             objCustomerParkingSlot.ClampFees = resultdt.Rows[0]["ClampFee"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ClampFee"]);
                             objCustomerParkingSlot.ExtendAmount = resultdt.Rows[0]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ExtendAmount"]);
-                            objCustomerParkingSlot.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
-                            objCustomerParkingSlot.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
                             objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeID = resultdt.Rows[0]["ApplicationTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["ApplicationTypeID"]);
                             objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeCode = Convert.ToString(resultdt.Rows[0]["ApplicationTypeCode"]);
                             objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeName = Convert.ToString(resultdt.Rows[0]["ApplicationTypeName"]);
@@ -320,6 +443,64 @@ namespace InstaOperatorOauthAPIS.DAL
                             objCustomerParkingSlot.LocationParkingLotID.LotOpenTime = Convert.ToString(resultdt.Rows[0]["LotOpenTime"]);
                             objCustomerParkingSlot.SuperVisorID.UserCode = resultdt.Rows[0]["SUPERVISORCODE"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["SUPERVISORCODE"]);
                             objCustomerParkingSlot.SuperVisorID.PhoneNumber = resultdt.Rows[0]["SUPERVISORPHONENUMBER"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["SUPERVISORPHONENUMBER"]);
+                            objCustomerParkingSlot.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
+                            objCustomerParkingSlot.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
+                            
+                           
+                            string vehicleTypeCode= Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                            if (vehicleTypeCode.ToUpper() == "2W")
+                            {
+
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                objCustomerParkingSlot.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                objCustomerParkingSlot.VehicleTypeID.VehicleIcon = "bike_black.png";
+
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleIcon = "bike_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "3W")
+                            {
+
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "THREE WHEELER";
+                                objCustomerParkingSlot.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                objCustomerParkingSlot.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "THREE WHEELER";
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "4W")
+                            {
+
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                objCustomerParkingSlot.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                objCustomerParkingSlot.VehicleTypeID.VehicleIcon = "car_black.png";
+
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleIcon = "car_black.png";
+
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "HW")
+                            {
+
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
+                                objCustomerParkingSlot.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                objCustomerParkingSlot.VehicleTypeID.VehicleIcon = "hv_black.png";
+
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "HEAVY VEHICLE";
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleIcon = "hv_black.png";
+
+                            }
+                            objCustomerParkingSlot.GSTNumber = "36AACFZ1015E1ZL";
+
+                            DALCustomerVehicle dal_CustomerVehicle = new DALCustomerVehicle();
+                            objCustomerParkingSlot.DueAmount = dal_CustomerVehicle.GetVehicleDueAmount(Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]), Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]));
+
+
                         }
                     }
                 }
@@ -515,24 +696,13 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objCustomerParkingSlot.ExpectedEndTime = resultdt.Rows[i]["ExpectedEndTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ExpectedEndTime"]);
                                 objCustomerParkingSlot.ActualStartTime = resultdt.Rows[i]["ActualStartTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ActualStartTime"]);
                                 objCustomerParkingSlot.ActualEndTime = resultdt.Rows[i]["ActualEndTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ActualEndTime"]);
-                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
-                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
-                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[i]["VehicleTypeName"]);
-                                if (Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]).ToUpper() == "2W".ToUpper())
-                                {
-                                    objCustomerParkingSlot.VehicleTypeID.VehicleImage = "bike_black.png";
-                                }
-                                else if (Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]).ToUpper() == "4W".ToUpper())
-                                {
-                                    objCustomerParkingSlot.VehicleTypeID.VehicleImage = "car_black.png";
-                                }
+                                
                                 objCustomerParkingSlot.Duration = Convert.ToString(resultdt.Rows[i]["Duration"]);
                                 objCustomerParkingSlot.PaymentTypeID.PaymentTypeID = resultdt.Rows[i]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["PaymentTypeID"]);
                                 objCustomerParkingSlot.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[i]["PaymentTypeName"]);
                                 objCustomerParkingSlot.CreatedBy = resultdt.Rows[i]["UserID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["UserID"]);
                                 objCustomerParkingSlot.CreatedByName = Convert.ToString(resultdt.Rows[i]["UserName"]);
                                 objCustomerParkingSlot.SuperVisorID.PhoneNumber = Convert.ToString(resultdt.Rows[i]["SUPERVISORPHONENUMBER"]);
-                                //objCustomerParkingSlot.Amount = resultdt.Rows[i]["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["Amount"]);
                                 objCustomerParkingSlot.PaidAmount = resultdt.Rows[i]["PaidAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["PaidAmount"]);
                                 objCustomerParkingSlot.DueAmount = resultdt.Rows[i]["DueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["DueAmount"]);
                                 objCustomerParkingSlot.IsWarning = resultdt.Rows[i]["IsWarning"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsWarning"]);
@@ -582,7 +752,54 @@ namespace InstaOperatorOauthAPIS.DAL
                                     VehicleWarningCount = VehicleWarningCount + 1;
                                     objCustomerParkingSlot.ViolationWarningCount = VehicleWarningCount;// resultdt.Rows[i]["ViolationWarningCount"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["ViolationWarningCount"]);
                                 }
+                                else
+                                {
+                                    objCustomerParkingSlot.ViolationWarningCount = VehicleWarningCount;
+                                }
+
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[i]["VehicleTypeName"]);
+                                objCustomerParkingSlot.GSTNumber = "36AACFZ1015E1ZL";
+                                string vehicleTypeCode = Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                                if (vehicleTypeCode.ToUpper() == "2W")
+                                {
+
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleIcon = "bike_black.png";
+                                    objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleIcon = "bike_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "3W")
+                                {
+
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "Three Wheeler";
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+                                    objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "4W")
+                                {
+
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleIcon = "car_black.png";
+                                    objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleIcon = "car_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "HW")
+                                {
+
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleIcon = "hv_black.png";
+                                    objCustomerParkingSlot.CustomerVehicleID.VehicleTypeID.VehicleIcon = "hv_black.png";
+                                }
+                                
+                                
                                 lstVehicleParkingDetails.Add(objCustomerParkingSlot);
+
+
+
                             }
                             var resultparking = lstVehicleParkingDetails.OrderByDescending(d => d.CustomerParkingSlotID).ToList();
                             lstVehicleParkingDetails = resultparking;
@@ -601,6 +818,111 @@ namespace InstaOperatorOauthAPIS.DAL
 
             return lstVehicleParkingDetails;
 
+        }
+        public List<VehicleType> GetAllVehicleTypes()
+        {
+            List<VehicleType> lstVehicleType = new List<VehicleType>();
+            DataTable resultdt = new DataTable();
+            try
+            {
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_GetAllVehicleTypes", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlconn_obj.Open();
+                        SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
+                        sqldap.Fill(resultdt);
+                        if (resultdt.Rows.Count > 0)
+                        {
+                            for (var i = 0; i < resultdt.Rows.Count; i++)
+                            {
+                               
+                                VehicleType objVehicleType = new VehicleType();
+                                string vehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                                objVehicleType.VehicleTypeID = resultdt.Rows[i]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
+                                objVehicleType.VehicleTypeName = resultdt.Rows[i]["VehicleTypeName"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeName"]);
+                                objVehicleType.VehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                                objVehicleType.VehicleImage = resultdt.Rows[i]["VehicleImage"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleImage"]);
+                                
+                                if(vehicleTypeCode.ToUpper()=="2W")
+                                {
+                                    objVehicleType.VehicleInActiveImage = "Twowheeler_circle.png";
+                                    objVehicleType.VehicleActiveImage = "Twowheeler_circle_ticked.png";
+                                    objVehicleType.VehicleIcon = "bike_black.png";
+                                    objVehicleType.VehicleTypeDisplayName =  "BIKE";
+                                    objVehicleType.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "3W")
+                                {
+                                    objVehicleType.VehicleInActiveImage = "ThreeW.png";
+                                    objVehicleType.VehicleActiveImage = "ThreeW_active.png";
+                                    objVehicleType.VehicleIcon = "ThreeW_black.png";
+                                    objVehicleType.VehicleTypeDisplayName = "THREE WHEELER";
+                                    objVehicleType.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "4W")
+                                {
+                                    objVehicleType.VehicleInActiveImage = "Fourwheeler_circle.png";
+                                    objVehicleType.VehicleActiveImage = "Fourwheeler_circle_ticked.png";
+                                    objVehicleType.VehicleIcon = "car_black.png";
+                                    objVehicleType.VehicleTypeDisplayName = "CAR";
+                                    objVehicleType.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "HW")
+                                {
+                                    objVehicleType.VehicleInActiveImage = "bus.png";
+                                    objVehicleType.VehicleActiveImage = "bus_active.png";
+                                    objVehicleType.VehicleIcon = "hv_black.png";
+                                    objVehicleType.VehicleTypeDisplayName = "Heavy Vehicle";
+                                    objVehicleType.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                }
+                                
+                                lstVehicleType.Add(objVehicleType);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALCustomerVehicleParkingLot", "Proc: " + "OPAPP_PROC_GetAllVehicleTypes", "GetAllVehicleTypes");
+            }
+            return lstVehicleType;
+        }
+
+        public decimal GetVehicleDueAmount(CustomerVehicle objCustomerVehicle)
+        {
+            DataTable resultdt = new DataTable();
+            decimal totalDueAmount = 0;
+            try
+            {
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_GetVehicleDueAmount", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", objCustomerVehicle.VehicleTypeID.VehicleTypeCode);
+                        sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", objCustomerVehicle.RegistrationNumber);
+                        sqlconn_obj.Open();
+                        SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
+                        sqldap.Fill(resultdt);
+                        if (resultdt.Rows.Count > 0)
+                        {
+                            totalDueAmount = resultdt.Rows[0]["TOTALDUEAMOUNT"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["TOTALDUEAMOUNT"]);
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALCustomerVehicleParkingLot", "Proc: " + "OPAPP_PROC_GetVehicleDueAmount", "GetVehicleDueAmount");
+
+
+            }
+
+            return totalDueAmount;
         }
 
         #region Reports
@@ -940,7 +1262,6 @@ namespace InstaOperatorOauthAPIS.DAL
                             if (dtRecentCheckOuts.Rows.Count > 0)
                             {
 
-
                                 for (var i = 0; i < dtRecentCheckOuts.Rows.Count; i++)
                                 {
                                     VMRecentCheckOuts objVMCheckOut = new VMRecentCheckOuts();
@@ -949,7 +1270,7 @@ namespace InstaOperatorOauthAPIS.DAL
                                     objVMCheckOut.StatusID.StatusCode = dtRecentCheckOuts.Rows[i]["StatusCode"] == DBNull.Value ? "" : Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]);
                                     objVMCheckOut.ActualStartTime = dtRecentCheckOuts.Rows[i]["ActualStartTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(dtRecentCheckOuts.Rows[i]["ActualStartTime"]);
                                     objVMCheckOut.ActualEndTime = dtRecentCheckOuts.Rows[i]["ActualEndTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(dtRecentCheckOuts.Rows[i]["ActualEndTime"]);
-                                    objVMCheckOut.Duration = dtRecentCheckOuts.Rows[i]["Duration"] == DBNull.Value ? "" : Convert.ToString(dtRecentCheckOuts.Rows[i]["Duration"])+" hr";
+                                    objVMCheckOut.Duration = dtRecentCheckOuts.Rows[i]["Duration"] == DBNull.Value ? "" : Convert.ToString(dtRecentCheckOuts.Rows[i]["Duration"]) + " hr";
                                     objVMCheckOut.Operator.UserID = dtRecentCheckOuts.Rows[i]["UserID"] == DBNull.Value ? 0 : Convert.ToInt32(dtRecentCheckOuts.Rows[i]["UserID"]);
                                     objVMCheckOut.Operator.UserName = dtRecentCheckOuts.Rows[i]["UserName"] == DBNull.Value ? "" : Convert.ToString(dtRecentCheckOuts.Rows[i]["UserName"]);
                                     objVMCheckOut.Operator.UserCode = dtRecentCheckOuts.Rows[i]["UserCode"] == DBNull.Value ? "" : Convert.ToString(dtRecentCheckOuts.Rows[i]["UserCode"]);
@@ -959,6 +1280,7 @@ namespace InstaOperatorOauthAPIS.DAL
                                     objVMCheckOut.VehicleTypeID.VehicleTypeID = Convert.ToInt32(dtRecentCheckOuts.Rows[i]["VehicleTypeID"]);
                                     objVMCheckOut.VehicleTypeID.VehicleTypeCode = Convert.ToString(dtRecentCheckOuts.Rows[i]["VehicleTypeCode"]);
                                     objVMCheckOut.VehicleTypeID.VehicleTypeName = Convert.ToString(dtRecentCheckOuts.Rows[i]["VehicleTypeName"]);
+                                    //bool IsViolationRec = dtRecentCheckOuts.Rows[i]["IsViolation"] == DBNull.Value ? false : Convert.ToBoolean(dtRecentCheckOuts.Rows[i]["IsViolation"]);
                                     objVMCheckOut.ApplicationTypeID.ApplicationTypeColor = "#3293fa";
                                     if (Convert.ToString(dtRecentCheckOuts.Rows[i]["VehicleTypeCode"]).ToUpper() == "2W".ToUpper())
                                     {
@@ -968,11 +1290,24 @@ namespace InstaOperatorOauthAPIS.DAL
                                     {
                                         objVMCheckOut.VehicleTypeID.VehicleImage = "car_black.png";
                                     }
+                                    else if (Convert.ToString(dtRecentCheckOuts.Rows[i]["VehicleTypeCode"]).ToUpper() == "3W".ToUpper())
+                                    {
+                                        objVMCheckOut.VehicleTypeID.VehicleImage = "ThreeW_black.png";
+                                    }
+                                    else if (Convert.ToString(dtRecentCheckOuts.Rows[i]["VehicleTypeCode"]).ToUpper() == "HW".ToUpper())
+                                    {
+                                        objVMCheckOut.VehicleTypeID.VehicleImage = "hv_black.png";
+                                    }
                                     objVMCheckOut.VehilceStatusColor = "#010101";
-                                    if (Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]) == "V" || Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]) == "FOC")
+                                    if (Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]) == "V")
                                     {
                                         objVMCheckOut.VehilceStatusColor = "#ff0000";
                                         objVMCheckOut.ApplicationTypeID.ApplicationTypeCode = "V";
+                                        objVMCheckOut.ApplicationTypeID.ApplicationTypeColor = "#ff0000";
+                                    }
+                                    if (Convert.ToString(dtRecentCheckOuts.Rows[i]["StatusCode"]) == "FOC")
+                                    {
+                                        objVMCheckOut.VehilceStatusColor = "#ff0000";
                                         objVMCheckOut.ApplicationTypeID.ApplicationTypeColor = "#ff0000";
                                     }
                                     objCheckOutReport.RecentCheckOutID.Add(objVMCheckOut);
@@ -1032,7 +1367,7 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objCustomerParkingSlot.ExpectedStartTime = resultdt.Rows[i]["ExpectedStartTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ExpectedStartTime"]);
                                 objCustomerParkingSlot.ExpectedEndTime = resultdt.Rows[i]["ExpectedEndTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ExpectedEndTime"]);
                                 objCustomerParkingSlot.ActualStartTime = resultdt.Rows[i]["ActualStartTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ActualStartTime"]);
-                               
+
                                 objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
                                 objCustomerParkingSlot.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
                                 objCustomerParkingSlot.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[i]["VehicleTypeName"]);
@@ -1044,16 +1379,24 @@ namespace InstaOperatorOauthAPIS.DAL
                                 {
                                     objCustomerParkingSlot.VehicleTypeID.VehicleImage = "car_black.png";
                                 }
+                                else if (Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]).ToUpper() == "3W".ToUpper())
+                                {
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleImage = "ThreeW_black.png";
+                                }
+                                else if (Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]).ToUpper() == "HW".ToUpper())
+                                {
+                                    objCustomerParkingSlot.VehicleTypeID.VehicleImage = "hv_black.png";
+                                }
                                 objCustomerParkingSlot.Duration = Convert.ToString(resultdt.Rows[i]["Duration"]);
                                 objCustomerParkingSlot.PaymentTypeID.PaymentTypeID = resultdt.Rows[i]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["PaymentTypeID"]);
                                 objCustomerParkingSlot.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[i]["PaymentTypeName"]);
                                 objCustomerParkingSlot.CreatedBy = resultdt.Rows[i]["UserID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["UserID"]);
                                 objCustomerParkingSlot.CreatedByName = Convert.ToString(resultdt.Rows[i]["UserName"]);
                                 objCustomerParkingSlot.UserCode = Convert.ToString(resultdt.Rows[i]["UserCode"]);
-                               
-                                if (resultdt.Rows.Count>1 && i==0)
+
+                                if (resultdt.Rows.Count > 1 && i == 0)
                                 {
-                                    objCustomerParkingSlot.UpdatedBy ="";
+                                    objCustomerParkingSlot.UpdatedBy = "";
                                     objCustomerParkingSlot.ActualEndTime = (Nullable<DateTime>)null;
                                 }
                                 else
@@ -1061,8 +1404,13 @@ namespace InstaOperatorOauthAPIS.DAL
                                     objCustomerParkingSlot.ActualEndTime = resultdt.Rows[i]["ActualEndTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ActualEndTime"]);
                                     objCustomerParkingSlot.UpdatedBy = resultdt.Rows[i]["CheckOutBy"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["CheckOutBy"]);
                                 }
-                                
                                 objCustomerParkingSlot.PaidAmount = resultdt.Rows[i]["PARKINGAMOUNT"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["PARKINGAMOUNT"]);
+
+
+                                if (Convert.ToString(resultdt.Rows[i]["ApplicationTypeCode"]) == "P")
+                                {
+                                    objCustomerParkingSlot.PaidAmount = ((resultdt.Rows[i]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["ExtendAmount"])));
+                                }
                                 objCustomerParkingSlot.ExtendAmount = resultdt.Rows[i]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["ExtendAmount"]);
                                 objCustomerParkingSlot.DueAmount = resultdt.Rows[i]["DueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["DueAmount"]);
                                 objCustomerParkingSlot.IsWarning = resultdt.Rows[i]["IsWarning"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsWarning"]);
@@ -1073,6 +1421,7 @@ namespace InstaOperatorOauthAPIS.DAL
                                 {
                                     totalParkingAmount = ((resultdt.Rows[i]["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["Amount"])) + (resultdt.Rows[i]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["ExtendAmount"])));
                                 }
+
                                 objCustomerParkingSlot.Amount = totalParkingAmount;
                                 objCustomerParkingSlot.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[i]["RegistrationNumber"]);
                                 objCustomerParkingSlot.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[i]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["CustomerVehicleID"]);
@@ -1101,11 +1450,12 @@ namespace InstaOperatorOauthAPIS.DAL
                                 {
                                     if (IsViolationRec)
                                     {
+                                        objCustomerParkingSlot.PaidAmount = 0; // If record entered through violatiion and status is FOC
                                         objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeCode = "V";
                                     }
                                     objCustomerParkingSlot.StatusID.StatusColor = "#ff0000";  // App Style
                                 }
-                                objCustomerParkingSlot.ViolationWarningCount = resultdt.Rows[i]["ViolationWarningCount"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["ViolationWarningCount"]); 
+                                objCustomerParkingSlot.ViolationWarningCount = resultdt.Rows[i]["ViolationWarningCount"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["ViolationWarningCount"]);
                                 lstCustomerParkingSlot.Add(objCustomerParkingSlot);
                             }
                         }
@@ -1119,7 +1469,6 @@ namespace InstaOperatorOauthAPIS.DAL
 
 
             }
-
             return lstCustomerParkingSlot;
 
         }
@@ -1130,7 +1479,7 @@ namespace InstaOperatorOauthAPIS.DAL
         {
             List<LocationLotOccupancyReport> lstLotOccupancyReport = new List<LocationLotOccupancyReport>();
             VMLocationLotOccupancyReport objVMLocationLotOccupancyReport = new VMLocationLotOccupancyReport();
-            
+
             try
             {
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
@@ -1153,7 +1502,7 @@ namespace InstaOperatorOauthAPIS.DAL
                             DataTable dtSummary = new DataTable();
                             dtLotOccupancy = ds.Tables[0];
                             dtSummary = ds.Tables[1];
-                            if(dtLotOccupancy.Rows.Count>0)
+                            if (dtLotOccupancy.Rows.Count > 0)
                             {
                                 for (var i = 0; i < dtLotOccupancy.Rows.Count; i++)
                                 {
@@ -1161,26 +1510,40 @@ namespace InstaOperatorOauthAPIS.DAL
                                     objoccupancy.ChekcInDuration = dtLotOccupancy.Rows[i]["Duration"] == DBNull.Value ? "0" : Convert.ToString(dtLotOccupancy.Rows[i]["Duration"]);
                                     objoccupancy.TwoWheeler = dtLotOccupancy.Rows[i]["2W"] == DBNull.Value ? "" : Convert.ToString(dtLotOccupancy.Rows[i]["2W"]);
                                     objoccupancy.FourWheeler = dtLotOccupancy.Rows[i]["4W"] == DBNull.Value ? "" : Convert.ToString(dtLotOccupancy.Rows[i]["4W"]);
+                                    objoccupancy.ThreeWheeler = dtLotOccupancy.Rows[i]["3W"] == DBNull.Value ? "" : Convert.ToString(dtLotOccupancy.Rows[i]["3W"]);
+                                    objoccupancy.HeavyWheeler = dtLotOccupancy.Rows[i]["HW"] == DBNull.Value ? "" : Convert.ToString(dtLotOccupancy.Rows[i]["HW"]);
                                     lstLotOccupancyReport.Add(objoccupancy);
                                 }
-                                if(dtSummary.Rows.Count>0)
+                                if (dtSummary.Rows.Count > 0)
                                 {
                                     LocationLotOccupancyReport objtoalSum = new LocationLotOccupancyReport();
                                     objtoalSum.ChekcInDuration = "Total";
                                     objtoalSum.TwoWheeler = dtSummary.Rows[0]["TOTAL2W"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["TOTAL2W"]);
                                     objtoalSum.FourWheeler = dtSummary.Rows[0]["TOTAL4W"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["TOTAL4W"]);
-                                    lstLotOccupancyReport.Add(objtoalSum);
+                                    objtoalSum.ThreeWheeler = dtSummary.Rows[0]["TOTAL3W"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["TOTAL3W"]);
+                                    objtoalSum.HeavyWheeler = dtSummary.Rows[0]["TOTALHW"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["TOTALHW"]);
 
                                     objVMLocationLotOccupancyReport.LocationLotOccupancyReportID = lstLotOccupancyReport;
-                                    objVMLocationLotOccupancyReport.TotalTwoWheelerPercentage = dtSummary.Rows[0]["TwoWheelerPercentage"] == DBNull.Value ? "0" + " (%)" : Convert.ToString(dtSummary.Rows[0]["TwoWheelerPercentage"]) +" (%)";
-                                    objVMLocationLotOccupancyReport.TotalFourWheelerPercentage = dtSummary.Rows[0]["FourWheelerPercentage"] == DBNull.Value ? "0"+" (%)" : Convert.ToString(dtSummary.Rows[0]["FourWheelerPercentage"]) + " (%)";
+                                    objVMLocationLotOccupancyReport.TotalTwoWheelerPercentage = dtSummary.Rows[0]["TwoWheelerPercentage"] == DBNull.Value ? "0" + " (%)" : Convert.ToString(dtSummary.Rows[0]["TwoWheelerPercentage"]) + " (%)";
+                                    objVMLocationLotOccupancyReport.TotalThreeWheelerPercentage = dtSummary.Rows[0]["ThreeWheelerPercentage"] == DBNull.Value ? "0" + " (%)" : Convert.ToString(dtSummary.Rows[0]["ThreeWheelerPercentage"]) + " (%)";
+                                    objVMLocationLotOccupancyReport.TotalFourWheelerPercentage = dtSummary.Rows[0]["FourWheelerPercentage"] == DBNull.Value ? "0" + " (%)" : Convert.ToString(dtSummary.Rows[0]["FourWheelerPercentage"]) + " (%)";
+                                    objVMLocationLotOccupancyReport.TotalHeavyWheelerPercentage = dtSummary.Rows[0]["HeavyWheelerPercentage"] == DBNull.Value ? "0" + " (%)" : Convert.ToString(dtSummary.Rows[0]["HeavyWheelerPercentage"]) + " (%)";
 
+                                    objVMLocationLotOccupancyReport.TotalTwoWheelerLotCapacity = dtSummary.Rows[0]["TwoWheelerLotCapacity"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["TwoWheelerLotCapacity"]);
+                                    objVMLocationLotOccupancyReport.TotalThreeWheelerLotCapacity = dtSummary.Rows[0]["ThreeWheelerLotCapacity"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["ThreeWheelerLotCapacity"]);
+                                    objVMLocationLotOccupancyReport.TotalFourWheelerLotCapacity = dtSummary.Rows[0]["FourWheelerLotCapacity"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["FourWheelerLotCapacity"]);
+                                    objVMLocationLotOccupancyReport.TotalHeavyWheelerLotCapacity = dtSummary.Rows[0]["HeavyWheelerLotCapacity"] == DBNull.Value ? "0" : Convert.ToString(dtSummary.Rows[0]["HeavyWheelerLotCapacity"]);
+
+                                    objVMLocationLotOccupancyReport.TotalTwoWheelerLotCapacity = objVMLocationLotOccupancyReport.TotalTwoWheelerLotCapacity + "(" + objtoalSum.TwoWheeler + ")";
+                                    objVMLocationLotOccupancyReport.TotalThreeWheelerLotCapacity = objVMLocationLotOccupancyReport.TotalThreeWheelerLotCapacity + "(" + objtoalSum.ThreeWheeler + ")";
+                                    objVMLocationLotOccupancyReport.TotalFourWheelerLotCapacity = objVMLocationLotOccupancyReport.TotalFourWheelerLotCapacity + "(" + objtoalSum.FourWheeler + ")";
+                                    objVMLocationLotOccupancyReport.TotalHeavyWheelerLotCapacity = objVMLocationLotOccupancyReport.TotalHeavyWheelerLotCapacity + "(" + objtoalSum.HeavyWheeler + ")";
                                 }
 
-                                
+
                             }
-                            
-                            
+
+
 
 
                         }
@@ -1193,6 +1556,48 @@ namespace InstaOperatorOauthAPIS.DAL
                 objExceptionlog.InsertException("WebAPI", ex.Message, "OPAPP_PROC_Report_GetLotOccupancy", "Proc: " + "OPAPP_PROC_GetVehicleParkingHistory", "GetLotOccupancyReport");
             }
             return objVMLocationLotOccupancyReport;
+
+        }
+        #endregion
+
+        #region Firebase - SQL Server Functions
+        public CustomerParkingSlot GetParkedVehicleDetailsFromFirebase(string RegistrationNumber)
+        {
+            CustomerParkingSlot objCustomerParkingSlot = null;
+            DataTable resultdt = new DataTable();
+            try
+            {
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("Firebase_PROC_GetCheckInVehicleDetails_RegistrationNumber", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", RegistrationNumber);
+                        sqlconn_obj.Open();
+                        SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
+                        sqldap.Fill(resultdt);
+                        if (resultdt.Rows.Count > 0)
+                        {
+                            objCustomerParkingSlot = new CustomerParkingSlot();
+                            objCustomerParkingSlot.CustomerParkingSlotID = resultdt.Rows[0]["CustomerParkingSlotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerParkingSlotID"]);
+                            objCustomerParkingSlot.CustomerID.CustomerID = resultdt.Rows[0]["CustomerID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
+                            objCustomerParkingSlot.LocationParkingLotID.LocationParkingLotID = resultdt.Rows[0]["LocationParkingLotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["LocationParkingLotID"]);
+                            objCustomerParkingSlot.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
+                            objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = resultdt.Rows[0]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
+                            objCustomerParkingSlot.StatusID.StatusID = resultdt.Rows[0]["StatusID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["StatusID"]);
+                            objCustomerParkingSlot.StatusID.StatusCode = Convert.ToString(resultdt.Rows[0]["StatusCode"]);
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALCustomerVehicleParkingLot", "Proc: " + "OPAPP_PROC_GetParkedVehicleDetails", "GetParkedVehicleDetails");
+
+
+            }
+            return objCustomerParkingSlot;
 
         }
         #endregion

@@ -22,7 +22,7 @@ namespace InstaOperatorOauthAPIS.Models.APIInputModel
         public bool IsWarning { get; set; }
         public int ReasonID { get; set; }
         public string ReasonName { get; set; }
-        public DateTime ViolationStartTime { get; set; }
+        public DateTime? ViolationStartTime { get; set; }
         public string ViolationTime { get; set; }
 
         public decimal VehicleImageLottitude { get; set; }

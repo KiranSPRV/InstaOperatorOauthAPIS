@@ -18,7 +18,12 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public DateTime CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
+        public string VehicleTypeDisplayName { get; set; }
         public string VehicleImage { get; set; }
+        public string VehicleInActiveImage { get; set; }
+        public string VehicleActiveImage { get; set; }
+        public string VehicleDisplayImage { get; set; }
+        public string VehicleIcon { get; set; }
 
     }
 }

@@ -27,6 +27,10 @@ namespace InstaOperatorOauthAPIS
                 name: "API Default2",
                 routeTemplate: "api/{controller}/{action}/{id}"
             );
+            config.Routes.MapHttpRoute(
+                name: "API Default3",
+                routeTemplate: "api/{controller}/{action}/{fbKey}"
+            );
             // WebAPI when dealing with JSON & JavaScript!  
             // Setup json serialization to serialize classes to camel (std. Json format)  
             var formatter = GlobalConfiguration.Configuration.Formatters.JsonFormatter;

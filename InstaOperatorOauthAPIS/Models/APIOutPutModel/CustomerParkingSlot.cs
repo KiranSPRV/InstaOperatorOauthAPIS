@@ -71,5 +71,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public decimal VehicleImageLongitude { get; set; }
         public ViolationReason FOCReasonID { get; set; }
 
+        public string GSTNumber { get; set; }
+
     }
 }

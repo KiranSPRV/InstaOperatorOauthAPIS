@@ -12,6 +12,7 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
 
         }
         public int ParkingBayID { get; set; }
+        public int LocationParkingLotID { get; set; }
         public string ParkingBayCode { get; set; }
         public string ParkingBayName { get; set; }
         public string ParkingBayRange { get; set; }
