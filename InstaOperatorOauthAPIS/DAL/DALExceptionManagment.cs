@@ -73,9 +73,9 @@ namespace ISTAOnlineWebAPI.DAL
                             sqlcmd_obj.Parameters.AddWithValue("@CustomerParkingSlotID ", objOfflineSync.CustomerParkingSlotID ==0?(object)DBNull.Value : objOfflineSync.CustomerParkingSlotID);
                             sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotName ", objOfflineSync.LocationParkingLotName =="" ? (object)DBNull.Value : objOfflineSync.LocationParkingLotName);
                             sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID ", objOfflineSync.LocationParkingLotID == 0 ? (object)DBNull.Value : objOfflineSync.LocationParkingLotID);
-                            sqlcmd_obj.Parameters.AddWithValue("@ExpectedStartTime ", objOfflineSync.ExpectedStartTime );
-                            sqlcmd_obj.Parameters.AddWithValue("@ExpectedEndTime ", objOfflineSync.ExpectedEndTime);
-                            sqlcmd_obj.Parameters.AddWithValue("@CreatedBy", objOfflineSync.CreatedBy);
+                            sqlcmd_obj.Parameters.AddWithValue("@ExpectedStartTime ", objOfflineSync.ExpectedStartTime ==null?(object)DBNull.Value: objOfflineSync.ExpectedStartTime);
+                            sqlcmd_obj.Parameters.AddWithValue("@ExpectedEndTime ", objOfflineSync.ExpectedEndTime == null ? (object)DBNull.Value : objOfflineSync.ExpectedEndTime);
+                            sqlcmd_obj.Parameters.AddWithValue("@CreatedBy", objOfflineSync.CreatedBy == 0 ? (object)DBNull.Value : objOfflineSync.CreatedBy);
                             sqlconn_obj.Open();
                             sqlcmd_obj.CommandTimeout = 0;
                             strResult = sqlcmd_obj.ExecuteNonQuery();

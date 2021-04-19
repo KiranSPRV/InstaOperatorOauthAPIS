@@ -1413,6 +1413,7 @@ namespace InstaOperatorOauthAPIS.Controllers
                 CustomerVehiclePass objCustomerVehiclePass = dal_CheckIn.VerifyVehicleHasPass(obj);
                 objVMVehiclePassWithDueAmount.VehicleDueAmount = dal_CustomerVehicle.GetVehicleDueAmount(obj.RegistrationNumber, obj.VehicleTypeCode);
                 objVMVehiclePassWithDueAmount.CustomerVehiclePassID = objCustomerVehiclePass;
+                objVMVehiclePassWithDueAmount.CustomerVehiclePassID.CustomerVehicleID.CustomerID= dal_CustomerVehicle.GetCustomerDetailsByRegistrationNumber(obj.RegistrationNumber, obj.VehicleTypeCode);
                 ObjAPIResponse.Object = (object)objVMVehiclePassWithDueAmount;
                 ObjAPIResponse.Result = true;
                 ObjAPIResponse.Message = "Success";
@@ -1786,12 +1787,18 @@ namespace InstaOperatorOauthAPIS.Controllers
 
 
                     }
+
+
                     lstMultiPass = dal_Pass.GetCustomerVehiclePassesByVehicle(objvmCustomerVehiclePass.CustomerVehiclePassID.CustomerVehicleID.RegistrationNumber);
                 }
 
 
                 if (lstMultiPass != null)
                 {
+                    if (lstMultiPass.Count > 0)
+                    {
+                        lstMultiPass[0].DueAmount = objvmCustomerVehiclePass.CustomerVehiclePassID.DueAmount;
+                    }
                     ObjAPIResponse.Object = (object)lstMultiPass;
                     ObjAPIResponse.Result = true;
                     ObjAPIResponse.Message = "Success";
@@ -2418,7 +2425,7 @@ namespace InstaOperatorOauthAPIS.Controllers
         #region Get All VehicleTypes
         [HttpGet]
         [ActionName("getAllVehicleTypes")]
-        public HttpResponseMessage getAllVehicleTypes()
+        public HttpResponseMessage getAllVehicleTypes(string LocationID)
         {
 
             ObjAPIResponse = new APIResponse();
@@ -2426,7 +2433,7 @@ namespace InstaOperatorOauthAPIS.Controllers
             try
             {
                 DALCustomerVehicleParkingLot dal_CustomerVehicleParkingLot = new DALCustomerVehicleParkingLot();
-                List<VehicleType> lstVehicleType = dal_CustomerVehicleParkingLot.GetAllVehicleTypes();
+                List<VehicleType> lstVehicleType = dal_CustomerVehicleParkingLot.GetAllVehicleTypes(LocationID);
 
                 if (lstVehicleType.Count > 0)
                 {
@@ -2502,7 +2509,7 @@ namespace InstaOperatorOauthAPIS.Controllers
             {
                 DALCustomerVehicle dal_CustomerVehicle = new DALCustomerVehicle();
                 List<CustomerParkingSlot> lsthistory = dal_CustomerVehicle.GetVehicleDueAmountHistory(RegistrationNumber, VehicleTypeCode);
-                
+
                 if (lsthistory.Count > 0)
                 {
                     ObjAPIResponse.Object = (object)lsthistory;

@@ -7,6 +7,10 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
 {
     public class Location
     {
+        public Location()
+        {
+            LocationCardTypeID = new CardType();
+        }
         public int LocationID { get; set; }
         public string LocationCode { get; set; }
         public string LocationName { get; set; }
@@ -17,5 +21,6 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public DateTime CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
+        public CardType LocationCardTypeID { get; set; }
     }
 }

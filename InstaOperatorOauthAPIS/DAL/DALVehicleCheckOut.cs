@@ -37,6 +37,7 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@FOCReasonID", (objInPut.FOCReasonID.ViolationReasonID == 0 || objInPut.FOCReasonID.ViolationReasonID == null) ? (object)DBNull.Value : objInPut.FOCReasonID.ViolationReasonID); 
                         sqlcmd_obj.Parameters.AddWithValue("@ClampFees", objInPut.ClampFees);
                         sqlcmd_obj.Parameters.AddWithValue("@ExtendAmount", objInPut.ExtendAmount);
+                        sqlcmd_obj.Parameters.AddWithValue("@PaidDueAmount", objInPut.DueAmount == 0  ? (object)DBNull.Value : objInPut.DueAmount);
                         sqlcmd_obj.Parameters.AddWithValue("@ParkingDuration", objInPut.Duration);
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", objInPut.CreatedBy);
                      
@@ -77,6 +78,8 @@ namespace InstaOperatorOauthAPIS.DAL
                             objcheckOut.ViolationFees = resultdt.Rows[0]["ViolationFees"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ViolationFees"]);
                             objcheckOut.ClampFees = resultdt.Rows[0]["ClampFee"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ClampFee"]);
                             objcheckOut.PaidAmount = resultdt.Rows[0]["PaidAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["PaidAmount"]);
+                            objcheckOut.DueAmount = resultdt.Rows[0]["DueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["DueAmount"]);
+                            objcheckOut.PaidDueAmount = resultdt.Rows[0]["PaidDueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["PaidDueAmount"]);
                             objcheckOut.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
                             objcheckOut.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
                             objcheckOut.IsClamp = resultdt.Rows[0]["IsClamp"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IsClamp"]);
@@ -305,7 +308,7 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqldap.Fill(resultdt);
                         if (resultdt.Rows.Count > 0)
                         {
-                           
+
                             PushNotification pushNotification = new PushNotification();
                             NotificationContent notificationContent = new NotificationContent();
                             notificationContent.DeviceID = Convert.ToString(resultdt.Rows[0]["DeviceID"]);
@@ -323,7 +326,7 @@ namespace InstaOperatorOauthAPIS.DAL
                             resultmsg = "Fail";
                         }
 
-                       
+
                     }
                 }
 
@@ -373,8 +376,5 @@ namespace InstaOperatorOauthAPIS.DAL
 
         }
         #endregion
-
-
-
     }
 }

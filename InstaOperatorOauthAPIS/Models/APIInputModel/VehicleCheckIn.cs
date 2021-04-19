@@ -25,6 +25,9 @@ namespace InstaOperatorOauthAPIS.Models.APIInputModel
         public int ParkingMinutes { get; set; }
         public decimal ParkingFees { get; set; }
         public decimal ClampFees { get; set; }
+
+        public decimal DueAmount { get; set; }
+
         public string PaymentType { get; set; }
         public bool PaymentReceived { get; set; }
         public string ParkingStartTime { get; set; }

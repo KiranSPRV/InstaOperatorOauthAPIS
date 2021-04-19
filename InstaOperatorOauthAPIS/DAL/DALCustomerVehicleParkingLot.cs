@@ -349,9 +349,9 @@ namespace InstaOperatorOauthAPIS.DAL
                                     {
                                         objVMLocationLotParkedVehicles.TotalOutTwoWheeler = dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"]);
                                     }
-                                    if (Convert.ToString(dtTotalVehicles.Rows[j]["VehicleTypeCode"]) == "3W")
+                                    if (Convert.ToString(dtTotalVehiclesCheckOut.Rows[j]["VehicleTypeCode"]) == "3W")
                                     {
-                                        objVMLocationLotParkedVehicles.TotalOutThreeWheeler = dtTotalVehicles.Rows[j]["TotalOUT"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehicles.Rows[j]["TotalOUT"]);
+                                        objVMLocationLotParkedVehicles.TotalOutThreeWheeler = dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"] == DBNull.Value ? 0 : Convert.ToInt32(dtTotalVehiclesCheckOut.Rows[j]["TotalOUT"]);
                                     }
                                     if (Convert.ToString(dtTotalVehiclesCheckOut.Rows[j]["VehicleTypeCode"]) == "4W")
                                     {
@@ -426,6 +426,7 @@ namespace InstaOperatorOauthAPIS.DAL
                             objCustomerParkingSlot.PaidAmount = resultdt.Rows[0]["PaidAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["PaidAmount"]);
                             objCustomerParkingSlot.ClampFees = resultdt.Rows[0]["ClampFee"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ClampFee"]);
                             objCustomerParkingSlot.ExtendAmount = resultdt.Rows[0]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ExtendAmount"]);
+                            objCustomerParkingSlot.PaidDueAmount = resultdt.Rows[0]["PaidDueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["PaidDueAmount"]);
                             objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeID = resultdt.Rows[0]["ApplicationTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["ApplicationTypeID"]);
                             objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeCode = Convert.ToString(resultdt.Rows[0]["ApplicationTypeCode"]);
                             objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeName = Convert.ToString(resultdt.Rows[0]["ApplicationTypeName"]);
@@ -528,7 +529,6 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
                         //  sqlcmd_obj.Parameters.AddWithValue("@ParkingStartTime", objInput.ParkingStartTime.ToString("MM/dd/yyyy hh:mm tt"));
                         // sqlcmd_obj.Parameters.AddWithValue("@ParkingEndTime", objInput.ParkingEndTime.ToString("MM/dd/yyyy hh:mm tt"));
-
 
                         int hoursDuration = (Convert.ToInt32((objInput.ParkingEndTime - objInput.ParkingStartTime).TotalMinutes)) / 60;
                         sqlcmd_obj.Parameters.AddWithValue("@CustomerParkingSlotId", objInput.CustomerParkingSlotId);
@@ -710,12 +710,27 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objCustomerParkingSlot.ClampFees = resultdt.Rows[i]["ClampFee"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["ClampFee"]);
                                 objCustomerParkingSlot.ViolationFees = resultdt.Rows[i]["ViolationFees"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["ViolationFees"]);
 
+                                // Paid Due Amount
+                                objCustomerParkingSlot.PaidDueAmount = resultdt.Rows[i]["PaidDueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["PaidDueAmount"]);
+                                objCustomerParkingSlot.IsDueAmountPaid = resultdt.Rows[i]["IsDueAmountPaid"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsDueAmountPaid"]);
+                                objCustomerParkingSlot.DueAmountPaidOn = resultdt.Rows[i]["DueAmountPaidOn"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["DueAmountPaidOn"]);
+
+
                                 //Total Parking Amount
                                 if (Convert.ToString(resultdt.Rows[i]["StatusCode"]) != "FOC")
                                 {
                                     totalParkingAmount = ((resultdt.Rows[i]["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["Amount"])) + (resultdt.Rows[i]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["ExtendAmount"])));
+                                    objCustomerParkingSlot.Amount = totalParkingAmount;
                                 }
-                                objCustomerParkingSlot.Amount = totalParkingAmount;
+                                else
+                                {
+                                    if(resultdt.Rows[i]["PaidAmount"]!= DBNull.Value)
+                                    {
+                                        objCustomerParkingSlot.Amount = (resultdt.Rows[i]["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["Amount"]));
+                                    }
+                                    
+                                }
+                                
                                 objCustomerParkingSlot.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[i]["RegistrationNumber"]);
                                 objCustomerParkingSlot.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[i]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["CustomerVehicleID"]);
                                 objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeID = resultdt.Rows[i]["ApplicationTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["ApplicationTypeID"]);
@@ -819,7 +834,7 @@ namespace InstaOperatorOauthAPIS.DAL
             return lstVehicleParkingDetails;
 
         }
-        public List<VehicleType> GetAllVehicleTypes()
+        public List<VehicleType> GetAllVehicleTypes(string LocationID)
         {
             List<VehicleType> lstVehicleType = new List<VehicleType>();
             DataTable resultdt = new DataTable();
@@ -830,6 +845,7 @@ namespace InstaOperatorOauthAPIS.DAL
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_GetAllVehicleTypes", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@LocationID", string.IsNullOrEmpty(LocationID)?(object)DBNull.Value:Convert.ToInt32(LocationID));
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
                         sqldap.Fill(resultdt);
@@ -1367,6 +1383,14 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objCustomerParkingSlot.ExpectedStartTime = resultdt.Rows[i]["ExpectedStartTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ExpectedStartTime"]);
                                 objCustomerParkingSlot.ExpectedEndTime = resultdt.Rows[i]["ExpectedEndTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ExpectedEndTime"]);
                                 objCustomerParkingSlot.ActualStartTime = resultdt.Rows[i]["ActualStartTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["ActualStartTime"]);
+
+
+                                // Paid Due Amount
+                                objCustomerParkingSlot.PaidDueAmount = resultdt.Rows[i]["PaidDueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["PaidDueAmount"]);
+                                objCustomerParkingSlot.IsDueAmountPaid = resultdt.Rows[i]["IsDueAmountPaid"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsDueAmountPaid"]);
+                                objCustomerParkingSlot.DueAmountPaidOn = resultdt.Rows[i]["DueAmountPaidOn"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["DueAmountPaidOn"]);
+
+
 
                                 objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
                                 objCustomerParkingSlot.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);

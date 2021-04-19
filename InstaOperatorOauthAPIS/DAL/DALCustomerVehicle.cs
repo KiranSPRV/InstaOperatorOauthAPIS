@@ -32,13 +32,13 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqldap.Fill(resultdt);
                         if (resultdt.Rows.Count > 0)
                         {
-                            for(var i=0;i<resultdt.Rows.Count;i++)
+                            for (var i = 0; i < resultdt.Rows.Count; i++)
                             {
                                 CustomerVehicle objVehicle = new CustomerVehicle();
                                 objVehicle.CustomerVehicleID = resultdt.Rows[i]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["CustomerVehicleID"]);
-                                
+
                                 objVehicle.VehicleTypeID.VehicleTypeID = resultdt.Rows[i]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
-                                objVehicle.VehicleTypeID.VehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ?"": Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                                objVehicle.VehicleTypeID.VehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
                                 objVehicle.RegistrationNumber = resultdt.Rows[i]["RegistrationNumber"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["RegistrationNumber"]);
                                 objVehicle.Model = resultdt.Rows[i]["Model"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["Model"]);
                                 objVehicle.Color = resultdt.Rows[i]["Color"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["Color"]);
@@ -76,17 +76,18 @@ namespace InstaOperatorOauthAPIS.DAL
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_GetVehicleRegistrationNumber", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", (RegistrationNumber==string.Empty|| RegistrationNumber=="")?(object)DBNull.Value: RegistrationNumber);
+                        sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", (RegistrationNumber == string.Empty || RegistrationNumber == "") ? (object)DBNull.Value : RegistrationNumber);
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
                         DataTable resultdt = new DataTable();
                         sqldap.Fill(resultdt);
                         if (resultdt.Rows.Count > 0)
+
                         {
                             for (var i = 0; i < resultdt.Rows.Count; i++)
                             {
                                 CustomerVehicle objVehicle = new CustomerVehicle();
-                                string vehicleTypeCode= resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                                string vehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
                                 objVehicle.CustomerVehicleID = resultdt.Rows[i]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["CustomerVehicleID"]);
                                 objVehicle.VehicleTypeID.VehicleTypeID = resultdt.Rows[i]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
                                 objVehicle.VehicleTypeID.VehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
@@ -95,33 +96,33 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objVehicle.Color = resultdt.Rows[i]["Color"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["Color"]);
                                 if (vehicleTypeCode.ToUpper() == "2W")
                                 {
-                                    
+
                                     objVehicle.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
                                     objVehicle.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
                                     objVehicle.VehicleTypeID.VehicleIcon = "bike_black.png";
                                 }
                                 else if (vehicleTypeCode.ToUpper() == "3W")
                                 {
-                                    
+
                                     objVehicle.VehicleTypeID.VehicleTypeDisplayName = "Three Wheeler";
                                     objVehicle.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
                                     objVehicle.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
                                 }
                                 else if (vehicleTypeCode.ToUpper() == "4W")
                                 {
-                                    
+
                                     objVehicle.VehicleTypeID.VehicleTypeDisplayName = "CAR";
                                     objVehicle.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
                                     objVehicle.VehicleTypeID.VehicleIcon = "car_black.png";
                                 }
                                 else if (vehicleTypeCode.ToUpper() == "HW")
                                 {
-                                    
+
                                     objVehicle.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
                                     objVehicle.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
                                     objVehicle.VehicleTypeID.VehicleIcon = "hv_black.png";
                                 }
-                               
+
                                 lstRegistrationNumber.Add(objVehicle);
                             }
                         }
@@ -138,7 +139,42 @@ namespace InstaOperatorOauthAPIS.DAL
             return lstRegistrationNumber;
 
         }
-        public decimal  GetVehicleDueAmount(string RegistrationNumber,string VehicleTypeCode)
+        public Customer GetCustomerDetailsByRegistrationNumber(string RegistrationNumber, string VehicleTypeCode)
+        {
+            Customer objCustomer = new Customer();
+            try
+            {
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_Get_CustomerDetails_RegistrationNumber", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", (RegistrationNumber == string.Empty || RegistrationNumber == "") ? (object)DBNull.Value : RegistrationNumber);
+                        sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", (VehicleTypeCode == string.Empty || VehicleTypeCode == "") ? (object)DBNull.Value : VehicleTypeCode);
+                        sqlconn_obj.Open();
+                        SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
+                        DataTable resultdt = new DataTable();
+                        sqldap.Fill(resultdt);
+                        if (resultdt.Rows.Count > 0)
+                        {
+                            objCustomer.CustomerID = resultdt.Rows[0]["CustomerID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
+                            objCustomer.PhoneNumber = resultdt.Rows[0]["PhoneNumber"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["PhoneNumber"]);
+                            objCustomer.Name = resultdt.Rows[0]["Name"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["Name"]);
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALCustomerVehicle", "Proc: " + "OPAPP_PROC_Get_CustomerDetails_RegistrationNumber", "GetCustomerDetailsByRegistrationNumber");
+                throw;
+
+            }
+            return objCustomer;
+
+        }
+        public decimal GetVehicleDueAmount(string RegistrationNumber, string VehicleTypeCode)
         {
             decimal DueAmount = 0;
             try
@@ -156,7 +192,7 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqldap.Fill(resultdt);
                         if (resultdt.Rows.Count > 0)
                         {
-                            DueAmount = resultdt.Rows[0]["DUEAMOUNT"] == DBNull.Value ? 0: Convert.ToDecimal(resultdt.Rows[0]["DUEAMOUNT"]);
+                            DueAmount = resultdt.Rows[0]["DUEAMOUNT"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["DUEAMOUNT"]);
                         }
                     }
                 }
@@ -171,7 +207,6 @@ namespace InstaOperatorOauthAPIS.DAL
             return DueAmount;
 
         }
-
         public List<CustomerParkingSlot> GetVehicleDueAmountHistory(string RegistrationNumber, string VehicleTypeCode)
         {
             List<CustomerParkingSlot> lstVehicleParkingDetails = new List<CustomerParkingSlot>();
@@ -315,8 +350,8 @@ namespace InstaOperatorOauthAPIS.DAL
 
 
                             }
-                         
-                            
+
+
                         }
 
                     }

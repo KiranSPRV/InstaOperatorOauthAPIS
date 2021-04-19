@@ -12,8 +12,8 @@ namespace InstaOperatorOauthAPIS.Notification
         {
             try
             {
-                string serverKey = "AAAAze2gdw8:APA91bEyYOjxsbqjnQb2JgEX6iKzKoFDrY5KdtYYDfz57Z9sN7ArZDOVTGMUN_cpa7AWB0a0jV8S-CUIBSUug_OdAxI1J9sNmTfy_OSsWHdIUiOodjy2SnQjhcnqYiA1eaX3-9URVhcH";
-                string senderId = "884455012111";
+                string serverKey = "AAAAc8zGa58:APA91bECUzG_VIMfx_e6vCmFAPYPzMRPgytSRGxUSpUq9_hx45eyKORXPXlt-ZyISwil4Nn8p4uDeM1SUaYL0PkKDrtMLGHjajr-IGe4ZF6W3FO8mVVs6rAHvS1I-4D1gSNYOZXVpkDD";
+                string senderId = "497356794783";
                 int badgeCounter = 1;
 
                 //Create the web request with fire base API  
@@ -71,8 +71,8 @@ namespace InstaOperatorOauthAPIS.Notification
         {
             try
             {
-                var applicationID = "AAAAsqQfsm8: APA91bFLwCKKGgQVWm3_UpptkNkeJla_ZNI4BoaKxLoc2LB6I6NFdY7EKKlowaZLs1_wDRrSMz4IkzjP5j0N4AskU1Ors8H6PEu93R8jWv - yRWU8GX_iHE6VXZCVAJiZ_XVh3gL04AbK";
-                var senderId = "767257719407";
+                var applicationID = "AAAAc8zGa58:APA91bECUzG_VIMfx_e6vCmFAPYPzMRPgytSRGxUSpUq9_hx45eyKORXPXlt-ZyISwil4Nn8p4uDeM1SUaYL0PkKDrtMLGHjajr-IGe4ZF6W3FO8mVVs6rAHvS1I-4D1gSNYOZXVpkDD";
+                var senderId = "497356794783";
                 string deviceId = "dEFMvuXG5mA:APA91bFT9jIMJnHMIfuH9uUqqmT4Lxbif7K1hDwhHHy8Gey5rR7iWoPjQpStWl4F5ah3TaOcsSQTwQ1que86Mo_ScuxngK_Hdib25iWRVwVW2jvuTr7nx7lZvrMsN-YLka3pAriXKrOE";
 
                 WebRequest tRequest = WebRequest.Create("https://fcm.googleapis.com/fcm/send");

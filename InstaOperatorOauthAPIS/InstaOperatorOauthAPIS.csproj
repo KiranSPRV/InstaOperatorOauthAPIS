@@ -248,6 +248,7 @@
     <Compile Include="Models\APIInputModel\ViolationAndClamp.cs" />
     <Compile Include="Models\APIInputModel\ViolationVehicleFees.cs" />
     <Compile Include="Models\APIOutPutModel\ApplicationType.cs" />
+    <Compile Include="Models\APIOutPutModel\CardType.cs" />
     <Compile Include="Models\APIOutPutModel\Customer.cs" />
     <Compile Include="Models\APIOutPutModel\CustomerParkingSlot.cs" />
     <Compile Include="Models\APIOutPutModel\CustomerVehicle.cs" />
@@ -255,6 +256,7 @@
     <Compile Include="Models\APIOutPutModel\Location.cs" />
     <Compile Include="Models\APIOutPutModel\LocationLotParkedVehicles.cs" />
     <Compile Include="Models\APIOutPutModel\LocationParkingLot.cs" />
+    <Compile Include="Models\APIOutPutModel\LocationPassMapper.cs" />
     <Compile Include="Models\APIOutPutModel\ParkingBay.cs" />
     <Compile Include="Models\APIOutPutModel\PassCardTypeMapper.cs" />
     <Compile Include="Models\APIOutPutModel\PassType.cs" />
@@ -369,6 +371,7 @@
     <Content Include="Scripts\esm\popper.js.map" />
     <Content Include="Scripts\esm\popper-utils.min.js.map" />
     <Content Include="Scripts\esm\popper-utils.js.map" />
+    <Content Include="google-services.json" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.5.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.5.0.js" />
