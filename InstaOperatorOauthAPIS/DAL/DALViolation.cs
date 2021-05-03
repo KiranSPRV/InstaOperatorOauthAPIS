@@ -135,53 +135,6 @@ namespace InstaOperatorOauthAPIS.DAL
             return objViolationAndClamp;
         }
 
-        #region Firebase Functions
-        public CustomerParkingSlot FBSaveVehicleViolationAndClamp(ViolationAndClamp objViolationanClamp)
-        {
-            CustomerParkingSlot objViolationCustomerParkingSlot = new CustomerParkingSlot();
-            DataTable resultdt = new DataTable();
-            string resultmsg = string.Empty;
-            try
-            {
-                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
-                {
-                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_SaveVehicleViolationAndClamp", sqlconn_obj))
-                    {
-                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@UserID", objViolationanClamp.UserID);
-                        sqlcmd_obj.Parameters.AddWithValue("@LocationID", objViolationanClamp.LocationID);
-                        sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", objViolationanClamp.LocationParkingLotID);
-                        sqlcmd_obj.Parameters.AddWithValue("@BayNumberID", objViolationanClamp.BayNumberID);
-                        sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", objViolationanClamp.VehicleTypeCode);
-                        sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", objViolationanClamp.RegistrationNumber);
-                        sqlcmd_obj.Parameters.AddWithValue("@ViolationImage", objViolationanClamp.ViolationImage);
-                        sqlcmd_obj.Parameters.AddWithValue("@ReasonID", objViolationanClamp.ReasonID);
-                        sqlcmd_obj.Parameters.AddWithValue("@IsClamp", objViolationanClamp.IsClamp);
-                        sqlcmd_obj.Parameters.AddWithValue("@IsWarning", objViolationanClamp.IsWarning);
-                        sqlcmd_obj.Parameters.AddWithValue("@ViolationStartTime", objViolationanClamp.ViolationTime);
-                        sqlcmd_obj.Parameters.AddWithValue("@VehicleImageLottitude", objViolationanClamp.VehicleImageLottitude == null || objViolationanClamp.VehicleImageLottitude == 0 ? (Object)DBNull.Value : objViolationanClamp.VehicleImageLottitude);
-                        sqlcmd_obj.Parameters.AddWithValue("@VehicleImageLongitude", objViolationanClamp.VehicleImageLongitude == null || objViolationanClamp.VehicleImageLongitude == 0 ? (Object)DBNull.Value : objViolationanClamp.VehicleImageLongitude);
-                        SqlDataAdapter dap = new SqlDataAdapter(sqlcmd_obj);
-                        dap.Fill(resultdt);
-                        if (resultdt.Rows.Count > 0)
-                        {
-                            int CustomerParkingSlotID = resultdt.Rows[0]["CustomerParkingSlotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerParkingSlotID"]);
-                            objViolationCustomerParkingSlot.CustomerParkingSlotID= CustomerParkingSlotID;
-                            DALCustomerVehicleParkingLot objDALCustomerVehicleParkingLot = new DALCustomerVehicleParkingLot();
-                            objViolationCustomerParkingSlot = objDALCustomerVehicleParkingLot.GetParkedVehicleDetails(CustomerParkingSlotID);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                objExceptionlog.InsertException("WebAPI", ex.Message, "DALViolation", "Proc: " + "OPAPP_PROC_SaveVehicleViolationAndClamp", "FBSaveVehicleViolationAndClamp");
-            }
-            return objViolationCustomerParkingSlot;
-
-        }
-
-
-        #endregion
+        
     }
 }

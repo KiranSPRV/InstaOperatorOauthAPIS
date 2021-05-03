@@ -216,165 +216,129 @@ namespace InstaOperatorOauthAPIS.DAL
 
         }
 
-        #region Firebase -SQL Server Functions
-        public CustomerParkingSlot VehicleCheckOutFromFirebase(CustomerParkingSlot objInPut)
+        #region Vehicle Auto Checkout/FOC Mehtods
+        public int OverStayVehicleAutoCheckOutFOC()
         {
 
-            CustomerParkingSlot objcheckOut = new CustomerParkingSlot();
+            int resultcount = 0;
             DALExceptionManagment objExceptionlog = new DALExceptionManagment();
             try
             {
+
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
-                    using (SqlCommand sqlcmd_obj = new SqlCommand("Firebase_PROC_SaveVehicleCheckOut", sqlconn_obj))
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@CustomerParkingSlotID", objInPut.CustomerParkingSlotID);
-                        sqlcmd_obj.Parameters.AddWithValue("@CustomerVehicleID", objInPut.CustomerVehicleID.CustomerVehicleID);
-                        sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", objInPut.LocationParkingLotID.LocationParkingLotID);
-                        sqlcmd_obj.Parameters.AddWithValue("@StatusName", objInPut.StatusID.StatusCode);
-                        sqlcmd_obj.Parameters.AddWithValue("@PaymentType", objInPut.PaymentTypeID.PaymentTypeCode);
-                        sqlcmd_obj.Parameters.AddWithValue("@IsClamp", objInPut.IsClamp);
-                        sqlcmd_obj.Parameters.AddWithValue("@ActualEndTime", objInPut.ActualEndTime);
-                        sqlcmd_obj.Parameters.AddWithValue("@Amount", objInPut.Amount);
-                        sqlcmd_obj.Parameters.AddWithValue("@ViolationFees", objInPut.ViolationFees);
-                        sqlcmd_obj.Parameters.AddWithValue("@ViolationReasonID", (objInPut.ViolationReasonID.ViolationReasonID == 0 || objInPut.ViolationReasonID.ViolationReasonID == null) ? (object)DBNull.Value : objInPut.ViolationReasonID.ViolationReasonID);
-                        sqlcmd_obj.Parameters.AddWithValue("@FOCReasonID", (objInPut.FOCReasonID.ViolationReasonID == 0 || objInPut.FOCReasonID.ViolationReasonID == null) ? (object)DBNull.Value : objInPut.FOCReasonID.ViolationReasonID);
-                        sqlcmd_obj.Parameters.AddWithValue("@ClampFees", objInPut.ClampFees);
-                        sqlcmd_obj.Parameters.AddWithValue("@ExtendAmount", objInPut.ExtendAmount);
-                        sqlcmd_obj.Parameters.AddWithValue("@ParkingDuration", objInPut.Duration);
-                        sqlcmd_obj.Parameters.AddWithValue("@UserID", objInPut.CreatedBy);
-
+                        sqlcmd_obj.Parameters.AddWithValue("@STATUSNAME", "OverStay");
+                        sqlcmd_obj.CommandTimeout = 0;
                         sqlconn_obj.Open();
-                        SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
-                        DataTable resultdt = new DataTable();
-                        sqldap.Fill(resultdt);
-                        if (resultdt.Rows.Count > 0)
-                        {
-
-                            objcheckOut.CustomerParkingSlotID = resultdt.Rows[0]["CustomerParkingSlotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerParkingSlotID"]);
-                            PushNotification pushNotification = new PushNotification();
-                            NotificationContent notificationContent = new NotificationContent();
-                            notificationContent.DeviceID = Convert.ToString(resultdt.Rows[0]["DeviceID"]);
-                            notificationContent.Title = "Check Out";
-                            //notificationContent.TextMessage = "Your vehicle - " + Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]) + " has been checked out from " + Convert.ToString(resultdt.Rows[0]["LocationName"]) + " metro station in the " + Convert.ToString(resultdt.Rows[0]["LocationParkingLotName"]) + " lot";
-
-                            notificationContent.TextMessage = "Your vehicle is checked out. Thank you for parking with us";
-
-                            if (notificationContent.DeviceID != "")
-                            {
-                                pushNotification.SendPushNotification(notificationContent);
-                            }
-                        }
+                        resultcount = sqlcmd_obj.ExecuteNonQuery();
+                        
                     }
                 }
+
+               
 
             }
             catch (Exception ex)
             {
-                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "Firebase_PROC_SaveVehicleCheckOut", "VehicleCheckOutFromFirebase");
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", "OverStayVehicleAutoCheckOutFOC");
                 throw;
 
             }
-            return objcheckOut;
+            return resultcount;
 
         }
-        public string UpdateVehicleClampStausFromFirebase(CustomerParkingSlot objInPut)
+        public int ViolationVehicleAutoCheckOutFOC()
         {
 
-            string resultmsg = string.Empty;
+            int resultcount = 0;
             DALExceptionManagment objExceptionlog = new DALExceptionManagment();
             try
             {
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
-                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UpdateVehicleClampStatus", sqlconn_obj))
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@CustomerParkingSlotID", objInPut.CustomerParkingSlotID);
-                        sqlcmd_obj.Parameters.AddWithValue("@CustomerVehicleID", objInPut.CustomerVehicleID.CustomerVehicleID);
-                        sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", objInPut.LocationParkingLotID.LocationParkingLotID);
-                        sqlcmd_obj.Parameters.AddWithValue("@IsClamp", objInPut.IsClamp);
-                        sqlcmd_obj.Parameters.AddWithValue("@IsWarning", Convert.ToBoolean(objInPut.IsWarning));
-                        sqlcmd_obj.Parameters.AddWithValue("@StatusID", objInPut.StatusID.StatusID);
-                        sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeID", objInPut.VehicleTypeID.VehicleTypeID);
-                        sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", objInPut.CustomerVehicleID.RegistrationNumber);
-                        sqlcmd_obj.Parameters.AddWithValue("@ViolationReasonID", objInPut.ViolationReasonID.ViolationReasonID);
-                        sqlcmd_obj.Parameters.AddWithValue("@UserID", objInPut.CreatedBy);
+                        sqlcmd_obj.Parameters.AddWithValue("@STATUSNAME", "Violation");
+                        sqlcmd_obj.CommandTimeout = 0;
                         sqlconn_obj.Open();
-
-                        SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
-                        DataTable resultdt = new DataTable();
-                        sqldap.Fill(resultdt);
-                        if (resultdt.Rows.Count > 0)
-                        {
-
-                            PushNotification pushNotification = new PushNotification();
-                            NotificationContent notificationContent = new NotificationContent();
-                            notificationContent.DeviceID = Convert.ToString(resultdt.Rows[0]["DeviceID"]);
-                            notificationContent.Title = "Clamp";
-                            //notificationContent.TextMessage = "Your vehicle - " + Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]) + " has been clamped due to " + Convert.ToString(resultdt.Rows[0]["Reason"]) + " at " + Convert.ToString(resultdt.Rows[0]["LocationName"]) + " metro station in the " + Convert.ToString(resultdt.Rows[0]["LocationParkingLotName"]) + " lot";
-                            notificationContent.TextMessage = "Sorry! Your vehicle is clamped. Please visit the parking lot";
-                            if (notificationContent.DeviceID != "")
-                            {
-                                pushNotification.SendPushNotification(notificationContent);
-                            }
-                            resultmsg = "Success";
-                        }
-                        else
-                        {
-                            resultmsg = "Fail";
-                        }
-
-
+                        resultcount = sqlcmd_obj.ExecuteNonQuery();
                     }
                 }
 
             }
             catch (Exception ex)
             {
-                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_UpdateVehicleClampStatus", "UpdateVehicleClampStaus");
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", "ViolationVehicleAutoCheckOutFOC");
                 throw;
 
             }
-            return resultmsg;
+            return resultcount;
 
         }
-
-        public CustomerParkingSlot VehicleOverstayFromFirebase(CustomerParkingSlot objInPut)
+        public int CheckInVehicleAutoCheckOutFOC()
         {
 
-            CustomerParkingSlot objcheckOut = new CustomerParkingSlot();
+            int resultcount = 0;
             DALExceptionManagment objExceptionlog = new DALExceptionManagment();
             try
             {
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
-                    using (SqlCommand sqlcmd_obj = new SqlCommand("Firebase_PROC_SaveVehicleOverstay", sqlconn_obj))
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@CustomerParkingSlotID", objInPut.CustomerParkingSlotID);
+                        sqlcmd_obj.Parameters.AddWithValue("@STATUSNAME", "CheckIn");
+                        sqlcmd_obj.CommandTimeout = 0;
                         sqlconn_obj.Open();
-                        SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
-                        DataTable resultdt = new DataTable();
-                        sqldap.Fill(resultdt);
-                        if (resultdt.Rows.Count > 0)
-                        {
-                            objcheckOut.CustomerParkingSlotID = resultdt.Rows[0]["CustomerParkingSlotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerParkingSlotID"]);
-                        }
+                        resultcount = sqlcmd_obj.ExecuteNonQuery();
                     }
                 }
 
             }
             catch (Exception ex)
             {
-                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_SaveVehicleCheckOut", "VehicleCheckOut");
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", "CheckInVehicleAutoCheckOutFOC");
                 throw;
 
             }
-            return objcheckOut;
+            return resultcount;
+
+        }
+        public int GovernmentVehicleAutoCheckOut()
+        {
+
+            int resultcount = 0;
+            DALExceptionManagment objExceptionlog = new DALExceptionManagment();
+            try
+            {
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@STATUSNAME", "Government");
+                        sqlcmd_obj.CommandTimeout = 0;
+                        sqlconn_obj.Open();
+                        resultcount = sqlcmd_obj.ExecuteNonQuery();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", "GovernmentVehicleAutoCheckOut");
+                throw;
+
+            }
+            return resultcount;
 
         }
         #endregion
+
+
     }
 }

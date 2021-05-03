@@ -2540,5 +2540,42 @@ namespace InstaOperatorOauthAPIS.Controllers
         }
         #endregion
 
+        #region Vehicle Auto Logout
+        [HttpGet]
+        [ActionName("vehicleAutoLogOut")]
+        public HttpResponseMessage vehicleAutoLogOut()
+        {
+
+            ObjAPIResponse = new APIResponse();
+            var resp = new HttpResponseMessage(HttpStatusCode.OK);
+            try
+            {
+                DALVehicleCheckOut dal_VehicleCheckOut = new DALVehicleCheckOut();
+                int overstayCount= dal_VehicleCheckOut.OverStayVehicleAutoCheckOutFOC();
+                int violationCount = dal_VehicleCheckOut.ViolationVehicleAutoCheckOutFOC();
+                int checkinCount = dal_VehicleCheckOut.CheckInVehicleAutoCheckOutFOC();
+                int GovernmentCount = dal_VehicleCheckOut.GovernmentVehicleAutoCheckOut();
+                string resltmsg = "Overstay: " + overstayCount + ",Violation: " + violationCount + ",CheckIn: " + checkinCount+ ",Government: "+ GovernmentCount;
+
+                ObjAPIResponse.Object = (object)true;
+                ObjAPIResponse.Result = true;
+                ObjAPIResponse.Message = "Success: "+ resltmsg;
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            }
+            catch (Exception ex)
+            {
+                ObjAPIResponse.Object = null;
+                ObjAPIResponse.Result = false;
+                ObjAPIResponse.Message = "Please contact administration";
+                resp.Content = new StringContent(JsonConvert.SerializeObject(ObjAPIResponse));
+                resp.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            }
+            return resp;
+        }
+        #endregion
+
     }
 }

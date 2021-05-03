@@ -1584,46 +1584,6 @@ namespace InstaOperatorOauthAPIS.DAL
         }
         #endregion
 
-        #region Firebase - SQL Server Functions
-        public CustomerParkingSlot GetParkedVehicleDetailsFromFirebase(string RegistrationNumber)
-        {
-            CustomerParkingSlot objCustomerParkingSlot = null;
-            DataTable resultdt = new DataTable();
-            try
-            {
-                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
-                {
-                    using (SqlCommand sqlcmd_obj = new SqlCommand("Firebase_PROC_GetCheckInVehicleDetails_RegistrationNumber", sqlconn_obj))
-                    {
-                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", RegistrationNumber);
-                        sqlconn_obj.Open();
-                        SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
-                        sqldap.Fill(resultdt);
-                        if (resultdt.Rows.Count > 0)
-                        {
-                            objCustomerParkingSlot = new CustomerParkingSlot();
-                            objCustomerParkingSlot.CustomerParkingSlotID = resultdt.Rows[0]["CustomerParkingSlotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerParkingSlotID"]);
-                            objCustomerParkingSlot.CustomerID.CustomerID = resultdt.Rows[0]["CustomerID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
-                            objCustomerParkingSlot.LocationParkingLotID.LocationParkingLotID = resultdt.Rows[0]["LocationParkingLotID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["LocationParkingLotID"]);
-                            objCustomerParkingSlot.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
-                            objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = resultdt.Rows[0]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
-                            objCustomerParkingSlot.StatusID.StatusID = resultdt.Rows[0]["StatusID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["StatusID"]);
-                            objCustomerParkingSlot.StatusID.StatusCode = Convert.ToString(resultdt.Rows[0]["StatusCode"]);
-                        }
-                    }
-                }
-            }
-
-            catch (Exception ex)
-            {
-                objExceptionlog.InsertException("WebAPI", ex.Message, "DALCustomerVehicleParkingLot", "Proc: " + "OPAPP_PROC_GetParkedVehicleDetails", "GetParkedVehicleDetails");
-
-
-            }
-            return objCustomerParkingSlot;
-
-        }
-        #endregion
+       
     }
 }

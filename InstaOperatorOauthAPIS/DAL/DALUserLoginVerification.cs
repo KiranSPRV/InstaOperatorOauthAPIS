@@ -60,6 +60,7 @@ namespace InstaOperatorOauthAPIS.DAL
                             objOutPutuser.PhoneNumber = Convert.ToString(resultdt.Rows[0]["PhoneNumber"]);
                             objOutPutuser.LoginTime = DateTime.Now;
                             objOutPutuser.LoginDeviceID = objUser.LoginDeviceID;
+                            objOutPutuser.Photo = resultdt.Rows[0]["Photo"]==DBNull.Value ? null : (byte[])resultdt.Rows[0]["Photo"];
                             List<LocationParkingLot> lstLocationParkingLots = GetLoginUserAllocatedLocationLots(objOutPutuser);
                             if (lstLocationParkingLots.Count > 0)
                             {
@@ -547,122 +548,7 @@ namespace InstaOperatorOauthAPIS.DAL
         }
 
 
-        #region Firebase Functions
-        public string FB_SaveUserDailyLogin(FB_UserDailyLogin objDailyLogin)
-        {
-
-            string resultMsg = string.Empty;
-            try
-            {
-
-                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
-                {
-                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_SaveUserDailyLogin", sqlconn_obj))
-                    {
-                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@UserID", (objDailyLogin.UserID == null || objDailyLogin.UserID.UserID == 0) ? (object)DBNull.Value : objDailyLogin.UserID.UserID);
-                        sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", (objDailyLogin.LocationParkingLotID.LocationParkingLotID == null || objDailyLogin.LocationParkingLotID.LocationParkingLotID == 0) ? (object)DBNull.Value : objDailyLogin.LocationParkingLotID.LocationParkingLotID);
-                        sqlcmd_obj.Parameters.AddWithValue("@Lattitude", (objDailyLogin.LocationParkingLotID.Lattitude == null || objDailyLogin.LocationParkingLotID.Lattitude == 0) ? (object)DBNull.Value : objDailyLogin.LocationParkingLotID.Lattitude);
-                        sqlcmd_obj.Parameters.AddWithValue("@Longitude", (objDailyLogin.LocationParkingLotID.Longitude == null || objDailyLogin.LocationParkingLotID.Longitude == 0) ? (object)DBNull.Value : objDailyLogin.LocationParkingLotID.Longitude);
-                        sqlcmd_obj.Parameters.AddWithValue("@LoginTime", (objDailyLogin.LoginTime == null ? (object)DBNull.Value : objDailyLogin.LoginTime));
-                        sqlcmd_obj.Parameters.AddWithValue("@LogOutTime", (object)DBNull.Value);
-                        sqlcmd_obj.Parameters.AddWithValue("@LoginDeviceID", (objDailyLogin.LoginDeviceID == null ? (object)DBNull.Value : objDailyLogin.LoginDeviceID));
-                        sqlconn_obj.Open();
-                        int resultvalue = sqlcmd_obj.ExecuteNonQuery();
-                        if (resultvalue > 0)
-                        {
-                            resultMsg = "Success";
-
-                        }
-                        else
-                        {
-                            resultMsg = "Fail";
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                objExceptionlog.InsertException("WebAPI", ex.Message, "DALUserLoginVerification", "Proc: " + "OPAPP_PROC_SaveUserDailyLogin", "FB_SaveUserDailyLoginTimes");
-            }
-            return resultMsg;
-        }
-        public string FB_UpdateUserDailyLogin(FB_UserDailyLogin objlogout)
-        {
-
-            string resultMsg = string.Empty;
-            try
-            {
-
-                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
-                {
-                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UserLogOut", sqlconn_obj))
-                    {
-                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@UserID", (objlogout.UserID.UserID == null || objlogout.UserID.UserID == 0) ? (object)DBNull.Value : objlogout.UserID.UserID);
-                        sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", (objlogout.LocationParkingLotID.LocationParkingLotID == null || objlogout.LocationParkingLotID.LocationParkingLotID == 0) ? (object)DBNull.Value : objlogout.LocationParkingLotID.LocationParkingLotID);
-                        sqlcmd_obj.Parameters.AddWithValue("@Lattitude", (objlogout.LocationParkingLotID.Lattitude == null || objlogout.LocationParkingLotID.Lattitude == 0) ? (object)DBNull.Value : objlogout.LocationParkingLotID.Lattitude);
-                        sqlcmd_obj.Parameters.AddWithValue("@Longitude", (objlogout.LocationParkingLotID.Longitude == null || objlogout.LocationParkingLotID.Longitude == 0) ? (object)DBNull.Value : objlogout.LocationParkingLotID.Longitude);
-                        sqlcmd_obj.Parameters.AddWithValue("@LoginTime", (objlogout.LoginTime == null ? (object)DBNull.Value : objlogout.LoginTime));
-                        sqlcmd_obj.Parameters.AddWithValue("@LogOutTime", (objlogout.LogoutTime == null ? (object)DBNull.Value : objlogout.LogoutTime));
-                        sqlconn_obj.Open();
-                        int resultvalue = sqlcmd_obj.ExecuteNonQuery();
-                        if (resultvalue > 0)
-                        {
-                            resultMsg = "Success";
-                        }
-                        else
-                        {
-                            resultMsg = "Fail";
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                objExceptionlog.InsertException("WebAPI", ex.Message, "DALUserLoginVerification", "Proc: " + "OPAPP_PROC_UserLogOut", "FB_UpdateUserDailyLogin");
-            }
-            return resultMsg;
-        }
-        public string FB_UpateLoginUserPassword(FB_User objUpdateUser)
-        {
-
-            string resultmsg = string.Empty;
-            try
-            {
-
-                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
-                {
-                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UpateLoginUserPassword", sqlconn_obj))
-                    {
-                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@UserID", objUpdateUser.UserID);
-                        sqlcmd_obj.Parameters.AddWithValue("@PASSWORD", objUpdateUser.Password);
-                        sqlcmd_obj.Parameters.AddWithValue("@UpdatedBy", objUpdateUser.UserID);
-                        sqlconn_obj.Open();
-                        int resultcount = sqlcmd_obj.ExecuteNonQuery();
-                        if (resultcount > 0)
-                        {
-                            resultmsg = "Success: " + objUpdateUser.UserID + "  :" + objUpdateUser.Password;
-                        }
-                        else
-                        {
-                            resultmsg = "Fail " + objUpdateUser.UserID + "  :" + objUpdateUser.Password;
-                        }
-                    }
-                }
-            }
-
-            catch (Exception ex)
-            {
-                objExceptionlog.InsertException("WebAPI", ex.Message, "DALUserLoginVerification", "Proc: " + "OPAPP_PROC_UpateLoginUserPassword", "FB_UpateLoginUserPassword");
-                throw;
-
-            }
-            return resultmsg;
-
-        }
-        #endregion
+        
 
     }
 

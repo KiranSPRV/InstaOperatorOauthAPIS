@@ -206,6 +206,7 @@ namespace InstaOperatorOauthAPIS.DAL
 
                                 objResultVehicle.CustomerVehicleID.CustomerID.CustomerID = resultdt.Rows[0]["CustomerID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
                                 objResultVehicle.CustomerVehicleID.CustomerID.Name = Convert.ToString(resultdt.Rows[0]["Name"]);
+                                objResultVehicle.CustomerVehicleID.CustomerID.PhoneNumber = Convert.ToString(resultdt.Rows[0]["PhoneNumber"]);
                                 objResultVehicle.CustomerVehiclePassID = Convert.ToInt32(resultdt.Rows[0]["CustomerVehiclePassID"]);
 
                                 objResultVehicle.LocationID.LocationID = Convert.ToInt32(resultdt.Rows[0]["LocationID"]);
@@ -974,8 +975,6 @@ namespace InstaOperatorOauthAPIS.DAL
         }
 
         #endregion
-
-        
 
 
 
