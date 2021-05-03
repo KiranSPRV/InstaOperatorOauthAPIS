@@ -11,9 +11,6 @@ using InstaOperatorOauthAPIS.Models;
 namespace InstaOperatorOauthAPIS.Helper_Code.OAuth2
 {
 
-
-  
-
     /// <summary>  
     /// Application OAUTH Provider class.  
     /// </summary>  

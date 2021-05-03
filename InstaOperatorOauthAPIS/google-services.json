@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "497356794783",
+    "firebase_url": "https://instaparking-6a50e.firebaseio.com",
+    "project_id": "instaparking-6a50e",
+    "storage_bucket": "instaparking-6a50e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497356794783:android:f50ef84b369d3a3e696baa",
+        "android_client_info": {
+          "package_name": "com.sprvtec.InstaParking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "497356794783-nc5vv024icd7r9mtmnsv73nqv1rdfv29.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCZCjGqk3f0SdH7prNkEEQT-SI29-vxG0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "497356794783-nc5vv024icd7r9mtmnsv73nqv1rdfv29.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "497356794783-6gob8otuutq32f9qungfttegr4c391fg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sprvtec.InstaParking"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,6 +5,8 @@ using ISTAOnlineWebAPI.DAL;
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Web;
 
 namespace InstaOperatorOauthAPIS.DAL
 {
@@ -35,6 +37,7 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@FOCReasonID", (objInPut.FOCReasonID.ViolationReasonID == 0 || objInPut.FOCReasonID.ViolationReasonID == null) ? (object)DBNull.Value : objInPut.FOCReasonID.ViolationReasonID); 
                         sqlcmd_obj.Parameters.AddWithValue("@ClampFees", objInPut.ClampFees);
                         sqlcmd_obj.Parameters.AddWithValue("@ExtendAmount", objInPut.ExtendAmount);
+                        sqlcmd_obj.Parameters.AddWithValue("@PaidDueAmount", objInPut.DueAmount == 0  ? (object)DBNull.Value : objInPut.DueAmount);
                         sqlcmd_obj.Parameters.AddWithValue("@ParkingDuration", objInPut.Duration);
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", objInPut.CreatedBy);
                      
@@ -64,6 +67,7 @@ namespace InstaOperatorOauthAPIS.DAL
                             objcheckOut.VehicleTypeID.VehicleTypeID = resultdt.Rows[0]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
                             objcheckOut.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
                             objcheckOut.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[0]["VehicleTypeName"]);
+                            string vehicleTypeCode = resultdt.Rows[0]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]); ;
                             objcheckOut.Duration = Convert.ToString(resultdt.Rows[0]["Duration"]);
                             objcheckOut.PaymentTypeID.PaymentTypeID = resultdt.Rows[0]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["PaymentTypeID"]);
                             objcheckOut.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[0]["PaymentTypeName"]);
@@ -74,6 +78,8 @@ namespace InstaOperatorOauthAPIS.DAL
                             objcheckOut.ViolationFees = resultdt.Rows[0]["ViolationFees"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ViolationFees"]);
                             objcheckOut.ClampFees = resultdt.Rows[0]["ClampFee"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ClampFee"]);
                             objcheckOut.PaidAmount = resultdt.Rows[0]["PaidAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["PaidAmount"]);
+                            objcheckOut.DueAmount = resultdt.Rows[0]["DueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["DueAmount"]);
+                            objcheckOut.PaidDueAmount = resultdt.Rows[0]["PaidDueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["PaidDueAmount"]);
                             objcheckOut.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
                             objcheckOut.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
                             objcheckOut.IsClamp = resultdt.Rows[0]["IsClamp"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IsClamp"]);
@@ -82,7 +88,37 @@ namespace InstaOperatorOauthAPIS.DAL
                             objcheckOut.SuperVisorID.PhoneNumber = resultdt.Rows[0]["SUPERVISORPHONENUMBER"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["SUPERVISORPHONENUMBER"]);
                             objcheckOut.ApplicationTypeID.ApplicationTypeCode = resultdt.Rows[0]["ApplicationTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["ApplicationTypeCode"]);
                             objcheckOut.ApplicationTypeID.ApplicationTypeName = resultdt.Rows[0]["ApplicationTypeName"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["ApplicationTypeName"]);
-                            
+                            objcheckOut.CustomerVehicleID.VehicleTypeID.VehicleTypeID = resultdt.Rows[0]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
+                            objcheckOut.CustomerVehicleID.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                            objcheckOut.CustomerVehicleID.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[0]["VehicleTypeName"]);
+                            objcheckOut.GSTNumber = "36AACFZ1015E1ZL";
+                            if (vehicleTypeCode.ToUpper() == "2W")
+                            {
+                                objcheckOut.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                objcheckOut.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                objcheckOut.VehicleTypeID.VehicleIcon = "bike_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "3W")
+                            {
+
+                                objcheckOut.VehicleTypeID.VehicleTypeDisplayName = "Three Wheeler";
+                                objcheckOut.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                objcheckOut.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "4W")
+                            {
+
+                                objcheckOut.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                objcheckOut.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                objcheckOut.VehicleTypeID.VehicleIcon = "car_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "HW")
+                            {
+
+                                objcheckOut.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
+                                objcheckOut.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                objcheckOut.VehicleTypeID.VehicleIcon = "hv_black.png";
+                            }
                             PushNotification pushNotification = new PushNotification();
                             NotificationContent notificationContent = new NotificationContent();
                             notificationContent.DeviceID = Convert.ToString(resultdt.Rows[0]["DeviceID"]);
@@ -179,5 +215,130 @@ namespace InstaOperatorOauthAPIS.DAL
             return resultmsg;
 
         }
+
+        #region Vehicle Auto Checkout/FOC Mehtods
+        public int OverStayVehicleAutoCheckOutFOC()
+        {
+
+            int resultcount = 0;
+            DALExceptionManagment objExceptionlog = new DALExceptionManagment();
+            try
+            {
+
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@STATUSNAME", "OverStay");
+                        sqlcmd_obj.CommandTimeout = 0;
+                        sqlconn_obj.Open();
+                        resultcount = sqlcmd_obj.ExecuteNonQuery();
+                        
+                    }
+                }
+
+               
+
+            }
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", "OverStayVehicleAutoCheckOutFOC");
+                throw;
+
+            }
+            return resultcount;
+
+        }
+        public int ViolationVehicleAutoCheckOutFOC()
+        {
+
+            int resultcount = 0;
+            DALExceptionManagment objExceptionlog = new DALExceptionManagment();
+            try
+            {
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@STATUSNAME", "Violation");
+                        sqlcmd_obj.CommandTimeout = 0;
+                        sqlconn_obj.Open();
+                        resultcount = sqlcmd_obj.ExecuteNonQuery();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", "ViolationVehicleAutoCheckOutFOC");
+                throw;
+
+            }
+            return resultcount;
+
+        }
+        public int CheckInVehicleAutoCheckOutFOC()
+        {
+
+            int resultcount = 0;
+            DALExceptionManagment objExceptionlog = new DALExceptionManagment();
+            try
+            {
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@STATUSNAME", "CheckIn");
+                        sqlcmd_obj.CommandTimeout = 0;
+                        sqlconn_obj.Open();
+                        resultcount = sqlcmd_obj.ExecuteNonQuery();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", "CheckInVehicleAutoCheckOutFOC");
+                throw;
+
+            }
+            return resultcount;
+
+        }
+        public int GovernmentVehicleAutoCheckOut()
+        {
+
+            int resultcount = 0;
+            DALExceptionManagment objExceptionlog = new DALExceptionManagment();
+            try
+            {
+                using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
+                {
+                    using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", sqlconn_obj))
+                    {
+                        sqlcmd_obj.CommandType = CommandType.StoredProcedure;
+                        sqlcmd_obj.Parameters.AddWithValue("@STATUSNAME", "Government");
+                        sqlcmd_obj.CommandTimeout = 0;
+                        sqlconn_obj.Open();
+                        resultcount = sqlcmd_obj.ExecuteNonQuery();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                objExceptionlog.InsertException("WebAPI", ex.Message, "DALVehicleCheckOut", "Proc: " + "OPAPP_PROC_UPDATE_VEHICLEAUTOCHECKOUT", "GovernmentVehicleAutoCheckOut");
+                throw;
+
+            }
+            return resultcount;
+
+        }
+        #endregion
+
+
     }
 }

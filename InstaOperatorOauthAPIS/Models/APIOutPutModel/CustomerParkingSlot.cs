@@ -35,6 +35,11 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public DateTime? ActualEndTime { get; set; }
         public string Duration { get; set; }
         public decimal Amount { get; set; }
+
+        public decimal PaidDueAmount { get; set; }
+        public bool IsDueAmountPaid { get; set; }
+        public DateTime? DueAmountPaidOn { get; set; }
+
         public string TransactionID { get; set; }
         public Status StatusID { get; set; }
         public bool IsActive { get; set; }
@@ -70,6 +75,8 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
 
         public decimal VehicleImageLongitude { get; set; }
         public ViolationReason FOCReasonID { get; set; }
+
+        public string GSTNumber { get; set; }
 
     }
 }

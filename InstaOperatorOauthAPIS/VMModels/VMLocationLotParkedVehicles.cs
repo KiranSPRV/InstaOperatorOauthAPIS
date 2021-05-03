@@ -14,5 +14,10 @@ namespace InstaOperatorOauthAPIS.VMModels
         public int TotalFourWheeler { get; set; }
         public int TotalOutTwoWheeler { get; set; }
         public int TotalOutFourWheeler { get; set; }
+        public int TotalHVWheeler { get; set; }
+        public int TotalOutHVWheeler { get; set; }
+
+        public int TotalThreeWheeler { get; set; }
+        public int TotalOutThreeWheeler { get; set; }
     }
 }

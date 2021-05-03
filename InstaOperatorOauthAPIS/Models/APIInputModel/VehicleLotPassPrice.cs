@@ -7,6 +7,7 @@ namespace InstaOperatorOauthAPIS.Models.APIInputModel
   public  class VehicleLotPassPrice
     {
         public string VehicleTypeCode { get; set; }
+        public int LocationID { get; set; }
         public int LocationParkingLotID { get; set; }
     }
 }

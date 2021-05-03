@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace InstaOperatorOauthAPIS.DAL
 {
@@ -19,12 +22,14 @@ namespace InstaOperatorOauthAPIS.DAL
             DataTable resultdt = new DataTable();
             try
             {
+
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_GetPassPriceDetails", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
                         sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", (objVehicleType.VehicleTypeCode == "" || objVehicleType.VehicleTypeCode == null) ? (object)DBNull.Value : Convert.ToString(objVehicleType.VehicleTypeCode));
+                        sqlcmd_obj.Parameters.AddWithValue("@LocationID", (objVehicleType.LocationID == 0 || objVehicleType.LocationID == null) ? (object)DBNull.Value : Convert.ToInt32(objVehicleType.LocationID));
                         sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", (objVehicleType.LocationParkingLotID == 0 || objVehicleType.LocationParkingLotID == null) ? (object)DBNull.Value : Convert.ToInt32(objVehicleType.LocationParkingLotID));
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
@@ -35,21 +40,68 @@ namespace InstaOperatorOauthAPIS.DAL
                             for (var i = 0; i < resultdt.Rows.Count; i++)
                             {
                                 PassPrice objPassPrice = new PassPrice();
+                                string vehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
                                 objPassPrice.PassPriceID = resultdt.Rows[i]["PassPriceID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["PassPriceID"]);
                                 objPassPrice.PassCode = resultdt.Rows[i]["PassCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["PassCode"]);
+                                objPassPrice.PassName = resultdt.Rows[i]["PassName"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["PassName" +
+                                    ""]);
                                 objPassPrice.StationAccess = resultdt.Rows[i]["StationAccess"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["StationAccess"]);
                                 objPassPrice.StartDate = resultdt.Rows[i]["StartDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["StartDate"]);
                                 objPassPrice.EndDate = resultdt.Rows[i]["EndDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[i]["EndDate"]);
                                 objPassPrice.Duration = resultdt.Rows[i]["Duration"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["Duration"]);
                                 objPassPrice.Price = resultdt.Rows[i]["Price"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["Price"]);
-                                objPassPrice.NFCCardPrice = resultdt.Rows[i]["NFCCardPrice"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[i]["NFCCardPrice"]);
-                                objPassPrice.NFCApplicable = resultdt.Rows[i]["NFCApplicable"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["NFCApplicable"]);
-                                objPassPrice.VehicleTypeID.VehicleTypeID = resultdt.Rows[i]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
-                                objPassPrice.VehicleTypeID.VehicleTypeName = resultdt.Rows[i]["VehicleTypeName"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeName"]);
-                                objPassPrice.VehicleTypeID.VehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                               
+                               
+                             
+
                                 objPassPrice.PassTypeID.PassTypeID = resultdt.Rows[i]["PassTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["PassTypeID"]);
                                 objPassPrice.PassTypeID.PassTypeName = resultdt.Rows[i]["PassTypeName"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["PassTypeName"]);
                                 objPassPrice.PassTypeID.PassTypeCode = resultdt.Rows[i]["PassTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["PassTypeCode"]);
+
+                               
+
+
+                                // Card Type and Card Prices
+                                objPassPrice.CardTypeID.CardTypeID = resultdt.Rows[i]["CardTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["CardTypeID"]);
+                                objPassPrice.CardTypeID.CardTypeName = Convert.ToString(resultdt.Rows[i]["CardTypeName"]);
+                                objPassPrice.CardPrice= resultdt.Rows[i]["CardPrice"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["CardPrice"]);
+                                objPassPrice.LocationPassMapperID.LocationID.LocationID= resultdt.Rows[i]["LocationID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["LocationID"]);
+                                objPassPrice.LocationPassMapperID.LocationID.LocationName =  Convert.ToString(resultdt.Rows[i]["LocationName"]);
+
+                                objPassPrice.VehicleTypeID.VehicleTypeID = resultdt.Rows[i]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
+                                objPassPrice.VehicleTypeID.VehicleTypeName = resultdt.Rows[i]["VehicleTypeName"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeName"]);
+                                objPassPrice.VehicleTypeID.VehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+
+                                if (vehicleTypeCode.ToUpper() == "2W")
+                                {
+
+                                    objPassPrice.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                    objPassPrice.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                    objPassPrice.VehicleTypeID.VehicleIcon = "bike_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "3W")
+                                {
+
+                                    objPassPrice.VehicleTypeID.VehicleTypeDisplayName = "Three Wheeler";
+                                    objPassPrice.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                    objPassPrice.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "4W")
+                                {
+
+                                    objPassPrice.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                    objPassPrice.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                    objPassPrice.VehicleTypeID.VehicleIcon = "car_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "HW")
+                                {
+
+                                    objPassPrice.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
+                                    objPassPrice.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                    objPassPrice.VehicleTypeID.VehicleIcon = "hv_black.png";
+                                }
+
+
                                 lstPassPrice.Add(objPassPrice);
                             }
                         }
@@ -68,6 +120,8 @@ namespace InstaOperatorOauthAPIS.DAL
             DataTable resultdt = new DataTable();
             try
             {
+
+
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_SaveCustomerVehiclePass", sqlconn_obj))
@@ -97,28 +151,62 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@Amount", (objCustomerVehiclePass.Amount == null ? (object)DBNull.Value : objCustomerVehiclePass.Amount));
                         sqlcmd_obj.Parameters.AddWithValue("@CardAmount", (objCustomerVehiclePass.CardAmount == null ? (object)DBNull.Value : objCustomerVehiclePass.CardAmount));
                         sqlcmd_obj.Parameters.AddWithValue("@TotalAmount", (objCustomerVehiclePass.TotalAmount == null ? (object)DBNull.Value : objCustomerVehiclePass.TotalAmount));
+                        sqlcmd_obj.Parameters.AddWithValue("@DueAmount", (objCustomerVehiclePass.DueAmount == null ? (object)DBNull.Value : objCustomerVehiclePass.DueAmount));
                         sqlcmd_obj.Parameters.AddWithValue("@TransactionID", (objCustomerVehiclePass.TransactionID == null ? (object)DBNull.Value : objCustomerVehiclePass.TransactionID));
                         sqlcmd_obj.Parameters.AddWithValue("@PaymentTypeID", (objCustomerVehiclePass.PaymentTypeID.PaymentTypeID == null ? (object)DBNull.Value : objCustomerVehiclePass.PaymentTypeID.PaymentTypeID));
                         sqlcmd_obj.Parameters.AddWithValue("@PaymentTypeCode", (objCustomerVehiclePass.PaymentTypeID.PaymentTypeCode == null ? (object)DBNull.Value : objCustomerVehiclePass.PaymentTypeID.PaymentTypeCode));
                         sqlcmd_obj.Parameters.AddWithValue("@BarCode", (objCustomerVehiclePass.BarCode == null ? (object)DBNull.Value : objCustomerVehiclePass.BarCode));
                         sqlcmd_obj.Parameters.AddWithValue("@StatusID", ((objCustomerVehiclePass.StatusID == null || objCustomerVehiclePass.StatusID == 0) ? (object)DBNull.Value : objCustomerVehiclePass.StatusID));
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", ((objCustomerVehiclePass.CreatedBy.UserID == null || objCustomerVehiclePass.CreatedBy.UserID == 0) ? (object)DBNull.Value : objCustomerVehiclePass.CreatedBy.UserID));
+                        sqlcmd_obj.Parameters.AddWithValue("@CardTypeID", (objCustomerVehiclePass.CardTypeID.CardTypeID == null ? (object)DBNull.Value : objCustomerVehiclePass.CardTypeID.CardTypeID));
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
+                        
                         sqldap.Fill(resultdt);
                         if (resultdt.Rows.Count > 0)
                         {
                             for (var i = 0; i < resultdt.Rows.Count; i++)
                             {
+                                objResultVehicle.DueAmount = (objCustomerVehiclePass.DueAmount == null ? 0 : objCustomerVehiclePass.DueAmount); // Due amount from Input
                                 objResultVehicle.CustomerVehiclePassID = resultdt.Rows[0]["CustomerVehiclePassID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehiclePassID"]);
                                 objResultVehicle.CustomerVehicleID.CustomerVehicleID = Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
-
                                 objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
                                 objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[0]["VehicleTypeName"]);
                                 objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                                string vehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                              
+                                if (vehicleTypeCode.ToUpper() == "2W")
+                                {
+
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "bike_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "3W")
+                                {
+
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Three Wheeler";
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "4W")
+                                {
+
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "car_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "HW")
+                                {
+
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "hv_black.png";
+                                }
 
                                 objResultVehicle.CustomerVehicleID.CustomerID.CustomerID = resultdt.Rows[0]["CustomerID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
                                 objResultVehicle.CustomerVehicleID.CustomerID.Name = Convert.ToString(resultdt.Rows[0]["Name"]);
+                                objResultVehicle.CustomerVehicleID.CustomerID.PhoneNumber = Convert.ToString(resultdt.Rows[0]["PhoneNumber"]);
                                 objResultVehicle.CustomerVehiclePassID = Convert.ToInt32(resultdt.Rows[0]["CustomerVehiclePassID"]);
 
                                 objResultVehicle.LocationID.LocationID = Convert.ToInt32(resultdt.Rows[0]["LocationID"]);
@@ -133,9 +221,13 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objResultVehicle.StartDate = resultdt.Rows[0]["StartDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["StartDate"]);
                                 objResultVehicle.ExpiryDate = resultdt.Rows[0]["ExpiryDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["ExpiryDate"]);
                                 objResultVehicle.CardAmount = resultdt.Rows[0]["CardAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["CardAmount"]);
-                                objResultVehicle.PassPriceID.NFCCardPrice = resultdt.Rows[i]["NFCCardPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[i]["NFCCardPrice"]);
+                                objResultVehicle.PassPriceID.CardPrice = resultdt.Rows[i]["CardAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[i]["CardAmount"]);
                                 objResultVehicle.Amount = resultdt.Rows[0]["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["Amount"]);
                                 objResultVehicle.TotalAmount = resultdt.Rows[0]["TotalAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["TotalAmount"]);
+
+
+                                objResultVehicle.CardTypeID.CardTypeID = resultdt.Rows[0]["CardTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CardTypeID"]);
+                                objResultVehicle.CardTypeID.CardTypeName = resultdt.Rows[0]["CardTypeName"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["CardTypeName"]);
 
                                 objResultVehicle.PassPriceID.StationAccess = Convert.ToString(resultdt.Rows[0]["StationAccess"]);
                                 objResultVehicle.CreatedBy.UserName = Convert.ToString(resultdt.Rows[0]["UserName"]);
@@ -146,6 +238,7 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objResultVehicle.CreatedBy.UserCode = Convert.ToString(resultdt.Rows[0]["UserCode"]);
                                 objResultVehicle.SuperVisorID.PhoneNumber = Convert.ToString(resultdt.Rows[0]["SUPERVISORPHONENUMBER"]);
                                 objResultVehicle.CreatedBy.LocationParkingLotID.LocationID.LocationName = Convert.ToString(resultdt.Rows[i]["PASSPURCHASELOCATION"]);
+                                objResultVehicle.GSTNumber = "36AACFZ1015E1ZL";
                             }
                         }
                     }
@@ -192,12 +285,14 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@Amount", (objCustomerVehiclePass.Amount == null ? (object)DBNull.Value : objCustomerVehiclePass.Amount));
                         sqlcmd_obj.Parameters.AddWithValue("@CardAmount", (objCustomerVehiclePass.CardAmount == null ? (object)DBNull.Value : objCustomerVehiclePass.CardAmount));
                         sqlcmd_obj.Parameters.AddWithValue("@TotalAmount", (objCustomerVehiclePass.TotalAmount == null ? (object)DBNull.Value : objCustomerVehiclePass.TotalAmount));
+                        sqlcmd_obj.Parameters.AddWithValue("@DueAmount", (objCustomerVehiclePass.DueAmount == null ? (object)DBNull.Value : objCustomerVehiclePass.DueAmount));
                         sqlcmd_obj.Parameters.AddWithValue("@TransactionID", (objCustomerVehiclePass.TransactionID == null ? (object)DBNull.Value : objCustomerVehiclePass.TransactionID));
                         sqlcmd_obj.Parameters.AddWithValue("@PaymentTypeID", (objCustomerVehiclePass.PaymentTypeID.PaymentTypeID == null ? (object)DBNull.Value : objCustomerVehiclePass.PaymentTypeID.PaymentTypeID));
                         sqlcmd_obj.Parameters.AddWithValue("@PaymentTypeCode", (objCustomerVehiclePass.PaymentTypeID.PaymentTypeCode == null ? (object)DBNull.Value : objCustomerVehiclePass.PaymentTypeID.PaymentTypeCode));
                         sqlcmd_obj.Parameters.AddWithValue("@BarCode", (objCustomerVehiclePass.BarCode == null ? (object)DBNull.Value : objCustomerVehiclePass.BarCode));
                         sqlcmd_obj.Parameters.AddWithValue("@StatusID", ((objCustomerVehiclePass.StatusID == null || objCustomerVehiclePass.StatusID == 0) ? (object)DBNull.Value : objCustomerVehiclePass.StatusID));
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", ((objCustomerVehiclePass.CreatedBy.UserID == null || objCustomerVehiclePass.CreatedBy.UserID == 0) ? (object)DBNull.Value : objCustomerVehiclePass.CreatedBy.UserID));
+                        sqlcmd_obj.Parameters.AddWithValue("@CardTypeID", (objCustomerVehiclePass.CardTypeID.CardTypeID == null ? (object)DBNull.Value : objCustomerVehiclePass.CardTypeID.CardTypeID));
                         sqlconn_obj.Open();
                         sqlcmd_obj.Parameters.Add("@OutVehiclePassID", SqlDbType.Int).Direction = ParameterDirection.Output;
                         sqlcmd_obj.ExecuteNonQuery();
@@ -212,7 +307,6 @@ namespace InstaOperatorOauthAPIS.DAL
             }
             return customerVehiclePassID;
         }
-
         public List<Location> GetAllLocation()
         {
             List<Location> lstLocation = new List<Location>();
@@ -378,6 +472,35 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[i]["VehicleTypeID"]);
                                 objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[i]["VehicleTypeName"]);
                                 objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                                string vehicleTypeCode = resultdt.Rows[i]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                                if (vehicleTypeCode.ToUpper() == "2W")
+                                {
+
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "bike_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "3W")
+                                {
+
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Three Wheeler";
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "4W")
+                                {
+
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "car_black.png";
+                                }
+                                else if (vehicleTypeCode.ToUpper() == "HW")
+                                {
+
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                    objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "hv_black.png";
+                                }
 
                                 objResultVehicle.CustomerVehicleID.CustomerID.CustomerID = Convert.ToInt32(resultdt.Rows[i]["CustomerID"]);
                                 objResultVehicle.CustomerVehicleID.CustomerID.Name = Convert.ToString(resultdt.Rows[i]["Name"]);
@@ -391,7 +514,7 @@ namespace InstaOperatorOauthAPIS.DAL
 
                                 objResultVehicle.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[i]["RegistrationNumber"]);
                                 objResultVehicle.PassPriceID.PassPriceID = Convert.ToInt32(resultdt.Rows[i]["PassPriceID"]);
-                                objResultVehicle.PassPriceID.NFCCardPrice = resultdt.Rows[i]["NFCCardPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[i]["NFCCardPrice"]);
+                                objResultVehicle.PassPriceID.CardPrice = resultdt.Rows[i]["CardAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[i]["CardAmount"]);
                                 objResultVehicle.PassPriceID.StationAccess = Convert.ToString(resultdt.Rows[i]["StationAccess"]);
                                 objResultVehicle.PassPriceID.Price = resultdt.Rows[i]["Price"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[i]["Price"]);
                                 objResultVehicle.IsMultiLot = resultdt.Rows[i]["IsMultiLot"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsMultiLot"]);
@@ -414,6 +537,16 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objResultVehicle.CreatedBy.UserCode = Convert.ToString(resultdt.Rows[i]["UserCode"]);
                                 objResultVehicle.CreatedBy.LocationParkingLotID.LocationID.LocationName = Convert.ToString(resultdt.Rows[i]["PASSPURCHASELOCATION"]);
                                 objResultVehicle.SuperVisorID.PhoneNumber = Convert.ToString(resultdt.Rows[i]["SUPERVISORPHONENUMBER"]);
+              
+
+                                objResultVehicle.CardTypeID.CardTypeID = resultdt.Rows[i]["CardTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["CardTypeID"]);
+                                objResultVehicle.CardTypeID.CardTypeName = Convert.ToString(resultdt.Rows[i]["CardTypeName"]);
+
+                                objResultVehicle.LocationID.LocationCardTypeID.CardTypeID = resultdt.Rows[i]["PURLOCCARDTYPEID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["PURLOCCARDTYPEID"]);
+                                objResultVehicle.LocationID.LocationCardTypeID.CardTypeName = Convert.ToString(resultdt.Rows[i]["PURLOCCARDTYPENAME"]);
+
+
+                                objResultVehicle.GSTNumber = "36AACFZ1015E1ZL";
                                 lstResultVehicle.Add(objResultVehicle);
 
                             }
@@ -449,10 +582,39 @@ namespace InstaOperatorOauthAPIS.DAL
                         {
                             objResultVehicle.CustomerVehiclePassID = resultdt.Rows[0]["CustomerVehiclePassID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehiclePassID"]);
                             objResultVehicle.CustomerVehicleID.CustomerVehicleID = Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
-
                             objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
                             objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[0]["VehicleTypeName"]);
                             objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                            string vehicleTypeCode = resultdt.Rows[0]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                            if (vehicleTypeCode.ToUpper() == "2W")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "bike_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "3W")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Three Wheeler";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "4W")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "car_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "HW")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "hv_black.png";
+                            }
+
 
                             objResultVehicle.CustomerVehicleID.CustomerID.CustomerID = Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
                             objResultVehicle.CustomerVehicleID.CustomerID.Name = Convert.ToString(resultdt.Rows[0]["Name"]);
@@ -466,9 +628,16 @@ namespace InstaOperatorOauthAPIS.DAL
 
                             objResultVehicle.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
                             objResultVehicle.PassPriceID.PassPriceID = Convert.ToInt32(resultdt.Rows[0]["PassPriceID"]);
-                            objResultVehicle.PassPriceID.NFCCardPrice = resultdt.Rows[0]["NFCCardPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["NFCCardPrice"]);
+                            objResultVehicle.PassPriceID.CardPrice = resultdt.Rows[0]["CardAmount"] == DBNull.Value  || Convert.ToDecimal( resultdt.Rows[0]["CardAmount"]) == 0 ?( resultdt.Rows[0]["CardPrice"] == DBNull.Value?0:Convert.ToDecimal(resultdt.Rows[0]["CardPrice"] )): Convert.ToDecimal(resultdt.Rows[0]["CardAmount"]);
                             objResultVehicle.PassPriceID.StationAccess = Convert.ToString(resultdt.Rows[0]["StationAccess"]);
                             objResultVehicle.PassPriceID.Price = resultdt.Rows[0]["Price"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["Price"]);
+
+                            objResultVehicle.CardTypeID.CardTypeID = resultdt.Rows[0]["CardTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CardTypeID"]);
+                            objResultVehicle.CardTypeID.CardTypeName = Convert.ToString(resultdt.Rows[0]["CardTypeName"]);
+
+                            objResultVehicle.LocationID.LocationCardTypeID.CardTypeID = resultdt.Rows[0]["PURLOCCARDTYPEID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["PURLOCCARDTYPEID"]);
+                            objResultVehicle.LocationID.LocationCardTypeID.CardTypeName = Convert.ToString(resultdt.Rows[0]["PURLOCCARDTYPENAME"]);
+                           
 
                             objResultVehicle.PassPriceID.PassTypeID.PassTypeID = Convert.ToInt32(resultdt.Rows[0]["PassTypeID"]);
                             objResultVehicle.PassPriceID.PassTypeID.PassTypeCode = Convert.ToString(resultdt.Rows[0]["PassTypeCode"]);
@@ -487,7 +656,7 @@ namespace InstaOperatorOauthAPIS.DAL
                             objResultVehicle.PaymentTypeID.PaymentTypeID = resultdt.Rows[0]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["PaymentTypeID"]);
                             objResultVehicle.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[0]["PaymentTypeName"]);
                             objResultVehicle.CreatedBy.UserCode = Convert.ToString(resultdt.Rows[0]["UserCode"]);
-
+                            objResultVehicle.GSTNumber = "36AACFZ1015E1ZL";
 
                         }
                     }
@@ -505,13 +674,13 @@ namespace InstaOperatorOauthAPIS.DAL
             DataTable resultdt = new DataTable();
             try
             {
+
+
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_ActivateCustomerVehiclePass", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-
-
                         sqlcmd_obj.Parameters.AddWithValue("@CustomerVehiclePassID", ((objPass.CustomerVehiclePassID == null || objPass.CustomerVehiclePassID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.CustomerVehiclePassID)));
                         sqlcmd_obj.Parameters.AddWithValue("@IssuedCard", ((objPass.IssuedCard == null) ? false : Convert.ToBoolean(objPass.IssuedCard)));
                         sqlcmd_obj.Parameters.AddWithValue("@CardNumber", ((objPass.CardNumber == null || objPass.CardNumber == "") ? (object)DBNull.Value : Convert.ToString(objPass.CardNumber)));
@@ -532,12 +701,41 @@ namespace InstaOperatorOauthAPIS.DAL
                             objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
                             objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[0]["VehicleTypeName"]);
                             objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                            string vehicleTypeCode = resultdt.Rows[0]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                            if (vehicleTypeCode.ToUpper() == "2W")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "bike_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "3W")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Three Wheeler";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "4W")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "car_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "HW")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "hv_black.png";
+                            }
+
 
                             objResultVehicle.CustomerVehicleID.CustomerID.CustomerID = Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
                             objResultVehicle.CustomerVehicleID.CustomerID.Name = Convert.ToString(resultdt.Rows[0]["Name"]);
                             objResultVehicle.CustomerVehicleID.CustomerID.PhoneNumber = Convert.ToString(resultdt.Rows[0]["PhoneNumber"]);
                             objResultVehicle.CustomerVehiclePassID = Convert.ToInt32(resultdt.Rows[0]["CustomerVehiclePassID"]);
-
                             objResultVehicle.LocationID.LocationID = Convert.ToInt32(resultdt.Rows[0]["LocationID"]);
                             objResultVehicle.LocationID.LocationName = Convert.ToString(resultdt.Rows[0]["LocationName"]);
                             objResultVehicle.PrimaryLocationParkingLotID.LocationParkingLotName = Convert.ToString(resultdt.Rows[0]["LocationParkingLotName"]);
@@ -545,7 +743,7 @@ namespace InstaOperatorOauthAPIS.DAL
 
                             objResultVehicle.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
                             objResultVehicle.PassPriceID.PassPriceID = Convert.ToInt32(resultdt.Rows[0]["PassPriceID"]);
-                            objResultVehicle.PassPriceID.NFCCardPrice = resultdt.Rows[0]["NFCCardPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["NFCCardPrice"]);
+                            objResultVehicle.PassPriceID.CardPrice = resultdt.Rows[0]["CardAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["CardAmount"]);
                             objResultVehicle.PassPriceID.StationAccess = Convert.ToString(resultdt.Rows[0]["StationAccess"]);
                             objResultVehicle.PassPriceID.Price = resultdt.Rows[0]["Price"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["Price"]);
 
@@ -567,7 +765,7 @@ namespace InstaOperatorOauthAPIS.DAL
                             objResultVehicle.CreatedBy.UserCode = Convert.ToString(resultdt.Rows[0]["UserCode"]);
                             objResultVehicle.CreatedBy.LocationParkingLotID.LocationID.LocationName = Convert.ToString(resultdt.Rows[0]["PASSPURCHASELOCATION"]);
                             objResultVehicle.SuperVisorID.PhoneNumber = Convert.ToString(resultdt.Rows[0]["SUPERVISORPHONENUMBER"]);
-
+                            objResultVehicle.GSTNumber = "36AACFZ1015E1ZL";
                         }
                     }
                 }
@@ -584,6 +782,8 @@ namespace InstaOperatorOauthAPIS.DAL
             DataTable resultdt = new DataTable();
             try
             {
+
+
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_GetCustomerVehiclePassDetails", sqlconn_obj))
@@ -607,6 +807,37 @@ namespace InstaOperatorOauthAPIS.DAL
                             objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
                             objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[0]["VehicleTypeName"]);
                             objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                            objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = Convert.ToString(resultdt.Rows[0]["VehicleTypeDisplayName"]);
+                            string vehicleTypeCode = resultdt.Rows[0]["VehicleTypeCode"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                            if (vehicleTypeCode.ToUpper() == "2W")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Twowheeler_circle.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "bike_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "3W")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Three Wheeler";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "ThreeW.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "ThreeW_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "4W")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "Fourwheeler_circle.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "car_black.png";
+                            }
+                            else if (vehicleTypeCode.ToUpper() == "HW")
+                            {
+
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleTypeDisplayName = "Heavy Vehicle";
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleDisplayImage = "bus.png";  //Default InActive Image
+                                objResultVehicle.CustomerVehicleID.VehicleTypeID.VehicleIcon = "hv_black.png";
+                            }
+
 
                             objResultVehicle.CustomerVehicleID.CustomerID.CustomerID = resultdt.Rows[0]["CustomerID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
                             objResultVehicle.CustomerVehicleID.CustomerID.Name = Convert.ToString(resultdt.Rows[0]["Name"]);
@@ -620,7 +851,7 @@ namespace InstaOperatorOauthAPIS.DAL
 
                             objResultVehicle.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
                             objResultVehicle.PassPriceID.PassPriceID = Convert.ToInt32(resultdt.Rows[0]["PassPriceID"]);
-                            objResultVehicle.PassPriceID.NFCCardPrice = resultdt.Rows[0]["NFCCardPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["NFCCardPrice"]);
+                            objResultVehicle.PassPriceID.CardPrice = resultdt.Rows[0]["CardAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["CardAmount"]);
                             objResultVehicle.PassPriceID.StationAccess = Convert.ToString(resultdt.Rows[0]["StationAccess"]);
                             objResultVehicle.PassPriceID.Price = resultdt.Rows[0]["Price"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["Price"]);
 
@@ -638,12 +869,18 @@ namespace InstaOperatorOauthAPIS.DAL
                             objResultVehicle.CreatedBy.UserCode = Convert.ToString(resultdt.Rows[0]["UserCode"]);
                             objResultVehicle.IssuedCard = resultdt.Rows[0]["IssuedCard"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IssuedCard"]);
                             objResultVehicle.CardNumber = Convert.ToString(resultdt.Rows[0]["CardNumber"]);
+
+                            objResultVehicle.CardTypeID.CardTypeID = resultdt.Rows[0]["CardTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CardTypeID"]);
+                            objResultVehicle.CardTypeID.CardTypeName = Convert.ToString(resultdt.Rows[0]["CardTypeName"]);
+
+
                             objResultVehicle.PaymentTypeID.PaymentTypeID = resultdt.Rows[0]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["PaymentTypeID"]);
                             objResultVehicle.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[0]["PaymentTypeName"]);
                             objResultVehicle.CreatedBy.UserCode = Convert.ToString(resultdt.Rows[0]["UserCode"]);
                             objResultVehicle.CreatedBy.LocationParkingLotID.LocationID.LocationName = Convert.ToString(resultdt.Rows[0]["PASSPURCHASELOCATION"]);
                             objResultVehicle.SuperVisorID.PhoneNumber = Convert.ToString(resultdt.Rows[0]["SUPERVISORPHONENUMBER"]);
                             objResultVehicle.NFCCardPaymentID.PaymentTypeCode = Convert.ToString(resultdt.Rows[0]["NFCPaymentType"]);
+                            objResultVehicle.GSTNumber = "36AACFZ1015E1ZL";
                         }
                     }
                 }
@@ -684,6 +921,7 @@ namespace InstaOperatorOauthAPIS.DAL
                             objResultVehicle.IssuedCard = resultdt.Rows[0]["IssuedCard"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IssuedCard"]);
                             objResultVehicle.CardNumber = Convert.ToString(resultdt.Rows[0]["CardNumber"]);
                             objResultVehicle.PaymentTypeID.PaymentTypeID = resultdt.Rows[0]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["PaymentTypeID"]);
+                            objResultVehicle.GSTNumber = "36AACFZ1015E1ZL";
                         }
                     }
                 }
@@ -694,12 +932,13 @@ namespace InstaOperatorOauthAPIS.DAL
             }
             return objResultVehicle;
         }
+
         #region NFC Card Purchase
         public int SaveCustomerVehiclePassNFCCard(CustomerVehiclePass objPass)
         {
             int resultID = 0;
             decimal totalAmount = 0;
-            totalAmount = (((objPass.PassPriceID.NFCCardPrice == null || objPass.PassPriceID.NFCCardPrice == 0) ? 0 : Convert.ToDecimal(objPass.PassPriceID.NFCCardPrice)) +
+            totalAmount = (((objPass.PassPriceID.CardPrice == null || objPass.PassPriceID.CardPrice == 0) ? 0 : Convert.ToDecimal(objPass.PassPriceID.CardPrice)) +
                            ((objPass.PassPriceID.Price == null || objPass.PassPriceID.Price == 0) ? 0 : Convert.ToDecimal(objPass.PassPriceID.Price)));
             try
             {
@@ -710,13 +949,14 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
                         sqlcmd_obj.Parameters.AddWithValue("@CustomerVehiclePassID", ((objPass.CustomerVehiclePassID == null || objPass.CustomerVehiclePassID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.CustomerVehiclePassID)));
                         sqlcmd_obj.Parameters.AddWithValue("@CardNumber", ((objPass.CardNumber == null || objPass.CardNumber == "") ? (object)DBNull.Value : Convert.ToString(objPass.CardNumber)));
-                        sqlcmd_obj.Parameters.AddWithValue("@CardAmount", ((objPass.PassPriceID.NFCCardPrice == null || objPass.PassPriceID.NFCCardPrice == 0) ? (object)DBNull.Value : Convert.ToDecimal(objPass.PassPriceID.NFCCardPrice)));
+                        sqlcmd_obj.Parameters.AddWithValue("@CardAmount", ((objPass.PassPriceID.CardPrice == null || objPass.PassPriceID.CardPrice == 0) ? (object)DBNull.Value : Convert.ToDecimal(objPass.PassPriceID.CardPrice)));
                         sqlcmd_obj.Parameters.AddWithValue("@TotalAmount", totalAmount);
                         sqlcmd_obj.Parameters.AddWithValue("@BarCode", (objPass.BarCode == null ? (object)DBNull.Value : objPass.BarCode));
                         sqlcmd_obj.Parameters.AddWithValue("@PaymentTypeCode", (objPass.NFCCardPaymentID.PaymentTypeCode == null ? (object)DBNull.Value : objPass.NFCCardPaymentID.PaymentTypeCode));
                         sqlcmd_obj.Parameters.AddWithValue("@ApplicationTypeCode", (objPass.NFCCardSoldFromID.ApplicationTypeCode == null ? (object)DBNull.Value : objPass.NFCCardSoldFromID.ApplicationTypeCode));
                         sqlcmd_obj.Parameters.AddWithValue("@LocationID", ((objPass.NFCSoldLotID.LocationID.LocationID == null || objPass.NFCSoldLotID.LocationID.LocationID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.NFCSoldLotID.LocationID.LocationID)));
                         sqlcmd_obj.Parameters.AddWithValue("@LocationLotID", ((objPass.NFCSoldLotID.LocationParkingLotID == null || objPass.NFCSoldLotID.LocationParkingLotID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.NFCSoldLotID.LocationParkingLotID)));
+                        sqlcmd_obj.Parameters.AddWithValue("@CardTypeID", ((objPass.CardTypeID.CardTypeID == null || objPass.CardTypeID.CardTypeID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.CardTypeID.CardTypeID)));
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", ((objPass.NFCCardSoldByID.UserID == null || objPass.NFCCardSoldByID.UserID == 0) ? (object)DBNull.Value : Convert.ToInt32(objPass.NFCCardSoldByID.UserID)));
                         sqlconn_obj.Open();
 
@@ -735,6 +975,8 @@ namespace InstaOperatorOauthAPIS.DAL
         }
 
         #endregion
+
+
 
     }
 }

@@ -102,7 +102,7 @@ namespace InstaOperatorOauthAPIS.DAL
 
                             objResultVehicle.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
                             objResultVehicle.PassPriceID.PassPriceID = resultdt.Rows[0]["PassPriceID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["PassPriceID"]);
-                            objResultVehicle.PassPriceID.NFCCardPrice = resultdt.Rows[0]["NFCCardPrice"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["NFCCardPrice"]);
+                            
                             objResultVehicle.PassPriceID.StationAccess = Convert.ToString(resultdt.Rows[0]["StationAccess"]);
                             objResultVehicle.PassPriceID.Price = resultdt.Rows[0]["Price"] == DBNull.Value ? 0m : Convert.ToDecimal(resultdt.Rows[0]["Price"]);
 
@@ -194,9 +194,9 @@ namespace InstaOperatorOauthAPIS.DAL
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_GetLocationParkingLotVehicleParkingFeeDetails", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@ParkingHours", obj.ParkingHours);
-                        sqlcmd_obj.Parameters.AddWithValue("@PaidAmount", (obj.PaidAmount==null|| obj.PaidAmount ==0)?0: obj.PaidAmount); 
-                        sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", obj.VehicleTypeCode);
+                        sqlcmd_obj.Parameters.AddWithValue("@ParkingHours", (obj.ParkingHours == null || obj.ParkingHours == 0) ? (object)DBNull.Value : obj.ParkingHours);
+                        sqlcmd_obj.Parameters.AddWithValue("@PaidAmount", (obj.PaidAmount == null || obj.PaidAmount == 0) ? (object)DBNull.Value : obj.PaidAmount);
+                        sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", string.IsNullOrEmpty(obj.VehicleTypeCode) ? (object)DBNull.Value : obj.VehicleTypeCode);
                         sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", obj.LocationParkingLotID);
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
@@ -213,7 +213,8 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objVehicleParkingFee.LotOpenTime = Convert.ToString(resultdt.Rows[i]["LotOpenTime"]);
                                 objVehicleParkingFee.LotCloseTime = Convert.ToString(resultdt.Rows[i]["LotCloseTime"]);
                                 objVehicleParkingFee.DayOfWeek = Convert.ToString(resultdt.Rows[i]["DayOfWeek"]);
-                                objVehicleParkingFee.IsFullDay = resultdt.Rows[i]["IsFullDay"] ==DBNull.Value?false: Convert.ToBoolean(resultdt.Rows[i]["IsFullDay"]);
+                                objVehicleParkingFee.VehicleTypeCode = Convert.ToString(resultdt.Rows[i]["VehicleTypeCode"]);
+                                objVehicleParkingFee.IsFullDay = resultdt.Rows[i]["IsFullDay"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsFullDay"]);
                                 lstVehicleParkingFee.Add(objVehicleParkingFee);
                             }
 
@@ -243,8 +244,8 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", obj.VehicleTypeCode);
                         sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", (obj.LocationParkingLotID == null || obj.LocationParkingLotID == 0) ? (object)DBNull.Value : obj.LocationParkingLotID);
                         sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", obj.RegistrationNumber);
-                        sqlcmd_obj.Parameters.AddWithValue("@BayNumberID", (obj.BayNumberID==null|| obj.BayNumberID == 0) ?(object)DBNull.Value: obj.BayNumberID);
-                        sqlcmd_obj.Parameters.AddWithValue("@PhoneNumber", obj.PhoneNumber=="" ? (object)DBNull.Value: obj.PhoneNumber);
+                        sqlcmd_obj.Parameters.AddWithValue("@BayNumberID", (obj.BayNumberID == null || obj.BayNumberID == 0) ? (object)DBNull.Value : obj.BayNumberID);
+                        sqlcmd_obj.Parameters.AddWithValue("@PhoneNumber", obj.PhoneNumber == "" ? (object)DBNull.Value : obj.PhoneNumber);
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", obj.UserID);
                         sqlconn_obj.Open();
                         int resultid = sqlcmd_obj.ExecuteNonQuery();
@@ -287,10 +288,8 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@StatusName", obj.StatusName);
                         sqlcmd_obj.Parameters.AddWithValue("@GovernmentVehicleImage", obj.GovernmentVehicleImage);
                         sqlcmd_obj.Parameters.AddWithValue("@UserID", obj.UserID);
-                        sqlcmd_obj.Parameters.AddWithValue("@VehicleImageLottitude", obj.VehicleImageLottitude==null|| obj.VehicleImageLottitude==0?(Object)DBNull.Value: obj.VehicleImageLottitude);
+                        sqlcmd_obj.Parameters.AddWithValue("@VehicleImageLottitude", obj.VehicleImageLottitude == null || obj.VehicleImageLottitude == 0 ? (Object)DBNull.Value : obj.VehicleImageLottitude);
                         sqlcmd_obj.Parameters.AddWithValue("@VehicleImageLongitude", obj.VehicleImageLongitude == null || obj.VehicleImageLongitude == 0 ? (Object)DBNull.Value : obj.VehicleImageLongitude);
-
-
                         sqlconn_obj.Open();
                         int resultid = sqlcmd_obj.ExecuteNonQuery();
                         if (resultid > 0)
@@ -330,22 +329,21 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqldap.Fill(resultdt);
                         if (resultdt.Rows.Count > 0)
                         {
-                            
-                                
-                                objCustomerVehiclePass.CustomerVehiclePassID = resultdt.Rows[0]["CustomerVehiclePassID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehiclePassID"]);
-                                objCustomerVehiclePass.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
-                                objCustomerVehiclePass.CustomerVehicleID.CustomerID.CustomerID = resultdt.Rows[0]["CustomerID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
-                                objCustomerVehiclePass.CustomerVehicleID.CustomerID.Name = Convert.ToString(resultdt.Rows[0]["Name"]);
-                                objCustomerVehiclePass.LocationID.LocationID = resultdt.Rows[0]["LocationID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["LocationID"]);
-                                objCustomerVehiclePass.LocationID.LocationName = Convert.ToString(resultdt.Rows[0]["LocationName"]);
-                                objCustomerVehiclePass.CustomerVehicleID.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
-                                objCustomerVehiclePass.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
-                                objCustomerVehiclePass.StartDate = resultdt.Rows[0]["StartDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["StartDate"]);
-                                objCustomerVehiclePass.ExpiryDate = resultdt.Rows[0]["ExpiryDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["ExpiryDate"]);
-                                objCustomerVehiclePass.IssuedCard = resultdt.Rows[0]["IssuedCard"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IssuedCard"]);
-                                objCustomerVehiclePass.CardNumber = Convert.ToString(resultdt.Rows[0]["CardNumber"]);
-                                objCustomerVehiclePass.PassPriceID.StationAccess = Convert.ToString(resultdt.Rows[0]["StationAccess"]);
-                                objCustomerVehiclePass.IsMultiLot = resultdt.Rows[0]["IsMultiLot"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IsMultiLot"]);
+                            objCustomerVehiclePass.CustomerVehiclePassID = resultdt.Rows[0]["CustomerVehiclePassID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehiclePassID"]);
+                            objCustomerVehiclePass.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
+                            objCustomerVehiclePass.CustomerVehicleID.CustomerID.CustomerID = resultdt.Rows[0]["CustomerID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerID"]);
+                            objCustomerVehiclePass.CustomerVehicleID.CustomerID.Name = Convert.ToString(resultdt.Rows[0]["Name"]);
+                            objCustomerVehiclePass.LocationID.LocationID = resultdt.Rows[0]["LocationID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["LocationID"]);
+                            objCustomerVehiclePass.LocationID.LocationName = Convert.ToString(resultdt.Rows[0]["LocationName"]);
+                            objCustomerVehiclePass.CustomerVehicleID.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
+                            objCustomerVehiclePass.CustomerVehicleID.VehicleTypeID.VehicleTypeID = Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
+                            objCustomerVehiclePass.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
+                            objCustomerVehiclePass.StartDate = resultdt.Rows[0]["StartDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["StartDate"]);
+                            objCustomerVehiclePass.ExpiryDate = resultdt.Rows[0]["ExpiryDate"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["ExpiryDate"]);
+                            objCustomerVehiclePass.IssuedCard = resultdt.Rows[0]["IssuedCard"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IssuedCard"]);
+                            objCustomerVehiclePass.CardNumber = Convert.ToString(resultdt.Rows[0]["CardNumber"]);
+                            objCustomerVehiclePass.PassPriceID.StationAccess = Convert.ToString(resultdt.Rows[0]["StationAccess"]);
+                            objCustomerVehiclePass.IsMultiLot = resultdt.Rows[0]["IsMultiLot"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IsMultiLot"]);
 
                         }
                     }
@@ -357,7 +355,7 @@ namespace InstaOperatorOauthAPIS.DAL
             }
             return objCustomerVehiclePass;
         }
-        public string VerifyCustomerNFCCardExpiry(CustomerVehiclePass objNFCCustomer,int checkinLocationID)
+        public string VerifyCustomerNFCCardExpiry(CustomerVehiclePass objNFCCustomer, int checkinLocationID)
         {
             string resultmsg = string.Empty;
             try
@@ -366,13 +364,13 @@ namespace InstaOperatorOauthAPIS.DAL
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, INDIAN_ZONE);
                 if (Convert.ToDateTime(objNFCCustomer.ExpiryDate).Date >= indianTime.Date)
                 {
-                    if(objNFCCustomer.PassPriceID.StationAccess.ToUpper()== ("All Stations".ToUpper()))
+                    if (objNFCCustomer.PassPriceID.StationAccess.ToUpper() == ("All Stations".ToUpper()))
                     {
                         resultmsg = "Valid";
                     }
                     else if (!objNFCCustomer.IsMultiLot)
                     {
-                        if(objNFCCustomer.LocationID.LocationID==checkinLocationID)
+                        if (objNFCCustomer.LocationID.LocationID == checkinLocationID)
                         {
                             resultmsg = "Valid";
                         }
@@ -384,10 +382,10 @@ namespace InstaOperatorOauthAPIS.DAL
                     }
                     else
                     {
-                        bool validLot= VerifyNFCCardVehiclePassMultiLot(objNFCCustomer.CardNumber, checkinLocationID);
-                        resultmsg = validLot? "Valid": "Invalid";
+                        bool validLot = VerifyNFCCardVehiclePassMultiLot(objNFCCustomer.CardNumber, checkinLocationID);
+                        resultmsg = validLot ? "Valid" : "Invalid";
                     }
-                        
+
                 }
                 else
                 {
@@ -404,7 +402,7 @@ namespace InstaOperatorOauthAPIS.DAL
             }
             return resultmsg;
         }
-        public bool VerifyNFCCardVehiclePassMultiLot(string NFCCardNumber,int checkinLocationID)
+        public bool VerifyNFCCardVehiclePassMultiLot(string NFCCardNumber, int checkinLocationID)
         {
             bool IsValidLocation = false;
             DataTable resultdt = new DataTable();
@@ -458,6 +456,7 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@ParkingHours", obj.ParkingHours);
                         sqlcmd_obj.Parameters.AddWithValue("@ParkingFees", obj.ParkingFees);
                         sqlcmd_obj.Parameters.AddWithValue("@ClampFees", (obj.ClampFees == null || obj.ClampFees == 0) ? (object)DBNull.Value : obj.ClampFees);
+                        sqlcmd_obj.Parameters.AddWithValue("@PaidDueAmount", (obj.DueAmount == null || obj.DueAmount == 0) ? (object)DBNull.Value : obj.DueAmount); 
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
                         sqldap.Fill(resultdt);
@@ -483,22 +482,46 @@ namespace InstaOperatorOauthAPIS.DAL
                             objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = resultdt.Rows[0]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
                             objCustomerParkingSlot.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
                             objCustomerParkingSlot.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[0]["VehicleTypeName"]);
+
+                            if (Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]).ToUpper() == "2W")
+                            {
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "BIKE";
+                            }
+                            else if (Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]).ToUpper() == "3W")
+                            {
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "THREE WHEELER";
+                            }
+                            else if (Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]).ToUpper() == "4W")
+                            {
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "CAR";
+                            }
+                            else if (Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]).ToUpper() == "HW")
+                            {
+                                objCustomerParkingSlot.VehicleTypeID.VehicleTypeDisplayName = "HEAVY VEHICLE";
+                            }
+
                             objCustomerParkingSlot.Duration = Convert.ToString(resultdt.Rows[0]["Duration"]);
                             objCustomerParkingSlot.PaymentTypeID.PaymentTypeID = Convert.ToInt32(resultdt.Rows[0]["PaymentTypeID"]);
                             objCustomerParkingSlot.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[0]["PaymentTypeName"]);
                             objCustomerParkingSlot.CreatedBy = resultdt.Rows[0]["UserID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["UserID"]);
-                            objCustomerParkingSlot.UserCode = resultdt.Rows[0]["USERCODE"] == DBNull.Value ?"": Convert.ToString(resultdt.Rows[0]["USERCODE"]);
+                            objCustomerParkingSlot.UserCode = resultdt.Rows[0]["USERCODE"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["USERCODE"]);
                             objCustomerParkingSlot.SuperVisorID.UserCode = resultdt.Rows[0]["SUPERVISORCODE"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["SUPERVISORCODE"]);
                             objCustomerParkingSlot.SuperVisorID.PhoneNumber = resultdt.Rows[0]["SUPERVISORPHONENUMBER"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[0]["SUPERVISORPHONENUMBER"]);
                             objCustomerParkingSlot.CreatedByName = Convert.ToString(resultdt.Rows[0]["UserName"]);
                             objCustomerParkingSlot.Amount = resultdt.Rows[0]["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["Amount"]);
+                            objCustomerParkingSlot.PaidDueAmount = resultdt.Rows[0]["PaidDueAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["PaidDueAmount"]);
                             objCustomerParkingSlot.ClampFees = resultdt.Rows[0]["ClampFee"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ClampFee"]);
                             objCustomerParkingSlot.PaidAmount = resultdt.Rows[0]["PaidAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["PaidAmount"]);
                             objCustomerParkingSlot.ExtendAmount = resultdt.Rows[0]["ExtendAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["ExtendAmount"]);
                             objCustomerParkingSlot.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
                             objCustomerParkingSlot.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
                             objCustomerParkingSlot.IsClamp = resultdt.Rows[0]["IsClamp"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IsClamp"]);
+                            objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeID = resultdt.Rows[0]["ApplicationTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["ApplicationTypeID"]);
+                            objCustomerParkingSlot.ApplicationTypeID.ApplicationTypeCode = Convert.ToString(resultdt.Rows[0]["ApplicationTypeCode"]);
+                            objCustomerParkingSlot.GSTNumber = "36AACFZ1015E1ZL";
                         }
+
+
                     }
                 }
             }
@@ -520,11 +543,11 @@ namespace InstaOperatorOauthAPIS.DAL
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_VerifyVehicleInCheckInStatus", sqlconn_obj))
                     {
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@LocationID", objVehicle.LocationID);
-                        sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", objVehicle.LocationParkingLotID);
+                        sqlcmd_obj.Parameters.AddWithValue("@LocationID", (objVehicle.LocationID == 0) ? (object)DBNull.Value : Convert.ToInt32(objVehicle.LocationID));
+                        sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", (objVehicle.LocationParkingLotID == 0) ? (object)DBNull.Value : Convert.ToInt32(objVehicle.LocationParkingLotID));
                         sqlcmd_obj.Parameters.AddWithValue("@VehicleTypeCode", objVehicle.VehicleTypeCode);
                         sqlcmd_obj.Parameters.AddWithValue("@RegistrationNumber", objVehicle.RegistrationNumber == "" ? (object)DBNull.Value : objVehicle.RegistrationNumber);
-                       
+
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
                         sqldap.Fill(resultdt);
@@ -541,22 +564,24 @@ namespace InstaOperatorOauthAPIS.DAL
                             objCustomerParkingSlot.LocationParkingLotID.ParkingBayID.ParkingBayID = resultdt.Rows[0]["ParkingBayID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["ParkingBayID"]);
                             objCustomerParkingSlot.LocationParkingLotID.ParkingBayID.ParkingBayName = Convert.ToString(resultdt.Rows[0]["ParkingBayName"]);
                             objCustomerParkingSlot.LocationParkingLotID.ParkingBayID.ParkingBayRange = Convert.ToString(resultdt.Rows[0]["ParkingBayRange"]);
-                            objCustomerParkingSlot.ExpectedStartTime = resultdt.Rows[0]["ExpectedStartTime"]==DBNull.Value? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["ExpectedStartTime"]);
-                            objCustomerParkingSlot.ExpectedEndTime = resultdt.Rows[0]["ExpectedEndTime"] == DBNull.Value ? (Nullable<DateTime>)null :  Convert.ToDateTime(resultdt.Rows[0]["ExpectedEndTime"]);
+                            objCustomerParkingSlot.ExpectedStartTime = resultdt.Rows[0]["ExpectedStartTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["ExpectedStartTime"]);
+                            objCustomerParkingSlot.ExpectedEndTime = resultdt.Rows[0]["ExpectedEndTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["ExpectedEndTime"]);
                             objCustomerParkingSlot.ActualStartTime = resultdt.Rows[0]["ActualStartTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["ActualStartTime"]);
                             objCustomerParkingSlot.ActualEndTime = resultdt.Rows[0]["ActualEndTime"] == DBNull.Value ? (Nullable<DateTime>)null : Convert.ToDateTime(resultdt.Rows[0]["ActualEndTime"]);
-                            objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = resultdt.Rows[0]["VehicleTypeID"]==DBNull.Value?0: Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
+                            objCustomerParkingSlot.VehicleTypeID.VehicleTypeID = resultdt.Rows[0]["VehicleTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["VehicleTypeID"]);
                             objCustomerParkingSlot.VehicleTypeID.VehicleTypeCode = Convert.ToString(resultdt.Rows[0]["VehicleTypeCode"]);
                             objCustomerParkingSlot.VehicleTypeID.VehicleTypeName = Convert.ToString(resultdt.Rows[0]["VehicleTypeName"]);
                             objCustomerParkingSlot.Duration = Convert.ToString(resultdt.Rows[0]["Duration"]);
-                            objCustomerParkingSlot.PaymentTypeID.PaymentTypeID = resultdt.Rows[0]["PaymentTypeID"]==DBNull.Value?0: Convert.ToInt32(resultdt.Rows[0]["PaymentTypeID"]);
+                            objCustomerParkingSlot.PaymentTypeID.PaymentTypeID = resultdt.Rows[0]["PaymentTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["PaymentTypeID"]);
                             objCustomerParkingSlot.PaymentTypeID.PaymentTypeName = Convert.ToString(resultdt.Rows[0]["PaymentTypeName"]);
-                            objCustomerParkingSlot.CreatedBy = resultdt.Rows[0]["UserID"]==DBNull.Value?0: Convert.ToInt32(resultdt.Rows[0]["UserID"]);
+                            objCustomerParkingSlot.CreatedBy = resultdt.Rows[0]["UserID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["UserID"]);
                             objCustomerParkingSlot.CreatedByName = Convert.ToString(resultdt.Rows[0]["UserName"]);
-                            objCustomerParkingSlot.Amount = resultdt.Rows[0]["Amount"]==DBNull.Value?0: Convert.ToDecimal(resultdt.Rows[0]["Amount"]);
+                            objCustomerParkingSlot.Amount = resultdt.Rows[0]["Amount"] == DBNull.Value ? 0 : Convert.ToDecimal(resultdt.Rows[0]["Amount"]);
                             objCustomerParkingSlot.CustomerVehicleID.RegistrationNumber = Convert.ToString(resultdt.Rows[0]["RegistrationNumber"]);
-                            objCustomerParkingSlot.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"]==DBNull.Value?0: Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
+                            objCustomerParkingSlot.CustomerVehicleID.CustomerVehicleID = resultdt.Rows[0]["CustomerVehicleID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["CustomerVehicleID"]);
                             objCustomerParkingSlot.IsClamp = resultdt.Rows[0]["IsClamp"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[0]["IsClamp"]);
+                            objCustomerParkingSlot.StatusID.StatusID = resultdt.Rows[0]["StatusID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[0]["StatusID"]);
+                            objCustomerParkingSlot.StatusID.StatusCode = Convert.ToString(resultdt.Rows[0]["StatusCode"]);
                         }
                     }
                 }
@@ -568,7 +593,7 @@ namespace InstaOperatorOauthAPIS.DAL
             return objCustomerParkingSlot;
 
         }
-        public List<VehicleType> GetLocationParkingLotVehicleParkingFee(User objLotUser)
+        public List<VehicleType> GetLocationLocationLotActiveVehicleTypes(User objLotUser)
         {
             List<VehicleType> lstVehicleType = new List<VehicleType>();
             try
@@ -609,6 +634,9 @@ namespace InstaOperatorOauthAPIS.DAL
             }
             return lstVehicleType;
         }
+
+        
+
 
     }
 }

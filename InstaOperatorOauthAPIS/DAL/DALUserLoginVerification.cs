@@ -1,6 +1,7 @@
 ﻿using InstaOperatorOauthAPIS.Models;
 using InstaOperatorOauthAPIS.Models.APIInputModel;
 using InstaOperatorOauthAPIS.Models.APIOutPutModel;
+using InstaOperatorOauthAPIS.Models.FirebaseModel;
 using InstaOperatorOauthAPIS.VMModels;
 using ISTAOnlineWebAPI.DAL;
 using ISTAOnlineWebAPI.DAL.EncryptDecrypt;
@@ -27,7 +28,7 @@ namespace InstaOperatorOauthAPIS.DAL
             try
             {
                 string resultkey = getEncryptdata(objUser.UserName);
-                string pwd = objpwdencrypt.Encrypt(objUser.Password, resultkey); 
+                string pwd = objpwdencrypt.Encrypt(objUser.Password, resultkey);
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_LoginVerification", sqlconn_obj))
@@ -56,8 +57,29 @@ namespace InstaOperatorOauthAPIS.DAL
                             objOutPutuser.UserTypeID.UserTypeName = Convert.ToString(resultdt.Rows[0]["UserTypeName"]);
                             objOutPutuser.LocationParkingLotID.Lattitude = Convert.ToDecimal(objUser.Latitude);
                             objOutPutuser.LocationParkingLotID.Longitude = Convert.ToDecimal(objUser.Longitude);
-                            objOutPutuser.LoginTime = objUser.LoginTime;
-                            
+                            objOutPutuser.PhoneNumber = Convert.ToString(resultdt.Rows[0]["PhoneNumber"]);
+                            objOutPutuser.LoginTime = DateTime.Now;
+                            objOutPutuser.LoginDeviceID = objUser.LoginDeviceID;
+                            objOutPutuser.Photo = resultdt.Rows[0]["Photo"]==DBNull.Value ? null : (byte[])resultdt.Rows[0]["Photo"];
+                            List<LocationParkingLot> lstLocationParkingLots = GetLoginUserAllocatedLocationLots(objOutPutuser);
+                            if (lstLocationParkingLots.Count > 0)
+                            {
+                                LocationParkingLot userlot = lstLocationParkingLots[0];
+                                objOutPutuser.LocationParkingLotID.LotCloseTime = userlot.LotCloseTime;
+                                objOutPutuser.LocationParkingLotID.LotOpenTime = userlot.LotOpenTime;
+                                if (resultdt.Rows[0]["LocationParkingLotID"] == DBNull.Value)
+                                {
+                                    objOutPutuser.LocationParkingLotID.LocationParkingLotID = userlot.LocationParkingLotID;
+                                    objOutPutuser.LocationParkingLotID.LocationParkingLotName = userlot.LocationParkingLotName;
+                                    objOutPutuser.LocationParkingLotID.LocationID.LocationID = userlot.LocationID.LocationID;
+                                    objOutPutuser.LocationParkingLotID.LocationID.LocationName = userlot.LocationID.LocationName;
+                                }
+                                DALLocationLot dalLocation = new DALLocationLot();
+                                var lotavilability = dalLocation.GetLocationLotVehicleAvailabilityDetails(userlot.LocationID.LocationID, userlot.LocationParkingLotID);
+                                objOutPutuser.LocationParkingLotID.LotVehicleAvailabilityName = lotavilability.LotVehicleAvailabilityName;
+
+
+                            }
                         }
                     }
                 }
@@ -99,7 +121,7 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqldap.Fill(resultdt);
                         if (resultdt.Rows.Count > 0)
                         {
-                            resultmsg = "Please check user already login in another device";
+                            resultmsg = "Please check user already logged in another device";
                         }
                     }
                 }
@@ -125,7 +147,7 @@ namespace InstaOperatorOauthAPIS.DAL
             try
             {
                 string resultkey = getEncryptdata(objUpdateUser.UserCode);
-                string pwd =  objpwdencrypt.Encrypt(objUpdateUser.Password, resultkey); //objUpdateUser.Password;//
+                string pwd = objpwdencrypt.Encrypt(objUpdateUser.Password, resultkey); //objUpdateUser.Password;//
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_UpateLoginUserPassword", sqlconn_obj))
@@ -137,7 +159,7 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqlcmd_obj.Parameters.AddWithValue("@UpdatedBy", objUpdateUser.UserID);
                         sqlconn_obj.Open();
                         int resultcount = sqlcmd_obj.ExecuteNonQuery();
-                        if(resultcount>0)
+                        if (resultcount > 0)
                         {
                             resultmsg = "Success";
                         }
@@ -190,6 +212,9 @@ namespace InstaOperatorOauthAPIS.DAL
                                 objLocationParkingLot.IsActive = resultdt.Rows[i]["IsHoliday"] == DBNull.Value ? false : Convert.ToBoolean(resultdt.Rows[i]["IsHoliday"]);
                                 objLocationParkingLot.LotOpenTime = resultdt.Rows[i]["LotOpenTime"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["LotOpenTime"]);
                                 objLocationParkingLot.LotCloseTime = resultdt.Rows[i]["LOTCLOSETIME"] == DBNull.Value ? "" : Convert.ToString(resultdt.Rows[i]["LOTCLOSETIME"]);
+                                DALLocationLot dalLocation = new DALLocationLot();
+                                var lotavilability = dalLocation.GetLocationLotVehicleAvailabilityDetails(Convert.ToInt32(resultdt.Rows[i]["LocationID"]), Convert.ToInt32(resultdt.Rows[i]["LocationParkingLotID"]));
+                                objLocationParkingLot.LotVehicleAvailabilityName = lotavilability.LotVehicleAvailabilityName;
                                 lstLocationParkingLot.Add(objLocationParkingLot);
                             }
                         }
@@ -209,7 +234,7 @@ namespace InstaOperatorOauthAPIS.DAL
             string resultMsg = string.Empty;
             try
             {
-                DateTime login = Convert.ToDateTime(objDailyLogin.LoginTime);
+
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_SaveUserDailyLogin", sqlconn_obj))
@@ -227,6 +252,7 @@ namespace InstaOperatorOauthAPIS.DAL
                         if (resultvalue > 0)
                         {
                             resultMsg = "Success";
+
                         }
                         else
                         {
@@ -352,7 +378,7 @@ namespace InstaOperatorOauthAPIS.DAL
                     {
 
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                        sqlcmd_obj.Parameters.AddWithValue("@UserCode", UserName==""?(object)DBNull.Value: UserName);
+                        sqlcmd_obj.Parameters.AddWithValue("@UserCode", UserName == "" ? (object)DBNull.Value : UserName);
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
                         DataTable resultdt = new DataTable();
@@ -380,10 +406,10 @@ namespace InstaOperatorOauthAPIS.DAL
         {
 
             List<User> lstOperator = new List<User>();
-           
+
             try
             {
-                
+
                 using (SqlConnection sqlconn_obj = new SqlConnection(SqlHelper.GetDBConnectionString()))
                 {
                     using (SqlCommand sqlcmd_obj = new SqlCommand("OPAPP_PROC_GetSupervisorOperators", sqlconn_obj))
@@ -397,17 +423,17 @@ namespace InstaOperatorOauthAPIS.DAL
                         sqldap.Fill(resultdt);
                         if (resultdt.Rows.Count > 0)
                         {
-                            for(var i=0;i<resultdt.Rows.Count;i++)
+                            for (var i = 0; i < resultdt.Rows.Count; i++)
                             {
                                 User objUser = new User();
                                 objUser.UserName = Convert.ToString(resultdt.Rows[i]["UserName"]);
-                                objUser.UserCode = Convert.ToString(resultdt.Rows[i]["UserName"])+"-"+ Convert.ToString(resultdt.Rows[i]["UserCode"]);
+                                objUser.UserCode = Convert.ToString(resultdt.Rows[i]["UserName"]) + "-" + Convert.ToString(resultdt.Rows[i]["UserCode"]);
                                 objUser.UserID = resultdt.Rows[i]["UserID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["UserID"]);
                                 objUser.UserTypeID.UserTypeID = resultdt.Rows[i]["UserTypeID"] == DBNull.Value ? 0 : Convert.ToInt32(resultdt.Rows[i]["UserTypeID"]);
                                 objUser.UserTypeID.UserTypeName = Convert.ToString(resultdt.Rows[i]["UserTypeName"]);
                                 lstOperator.Add(objUser);
                             }
-                           
+
 
                         }
                     }
@@ -437,8 +463,8 @@ namespace InstaOperatorOauthAPIS.DAL
                     {
 
                         sqlcmd_obj.CommandType = CommandType.StoredProcedure;
-                       
-                        sqlcmd_obj.Parameters.AddWithValue("@LocationID", (objLocationParkingLot.LocationID.LocationID==null|| objLocationParkingLot.LocationID.LocationID == 0)?(object)DBNull.Value : objLocationParkingLot.LocationID.LocationID);
+
+                        sqlcmd_obj.Parameters.AddWithValue("@LocationID", (objLocationParkingLot.LocationID.LocationID == null || objLocationParkingLot.LocationID.LocationID == 0) ? (object)DBNull.Value : objLocationParkingLot.LocationID.LocationID);
                         sqlcmd_obj.Parameters.AddWithValue("@LocationParkingLotID", (objLocationParkingLot.LocationParkingLotID == null || objLocationParkingLot.LocationParkingLotID == 0) ? (object)DBNull.Value : objLocationParkingLot.LocationParkingLotID);
                         sqlconn_obj.Open();
                         SqlDataAdapter sqldap = new SqlDataAdapter(sqlcmd_obj);
@@ -520,6 +546,10 @@ namespace InstaOperatorOauthAPIS.DAL
             return lstOperator;
 
         }
+
+
+        
+
     }
 
 }

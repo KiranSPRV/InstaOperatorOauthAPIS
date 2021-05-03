@@ -31,6 +31,6 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         public DateTime? LogoutTime { get; set; }
         public string LoginDeviceID { get; set; }
       
-
+        public byte[] Photo { get; set; }
     }
 }
