@@ -77,7 +77,11 @@ namespace InstaOperatorOauthAPIS.DAL
                                 DALLocationLot dalLocation = new DALLocationLot();
                                 var lotavilability = dalLocation.GetLocationLotVehicleAvailabilityDetails(userlot.LocationID.LocationID, userlot.LocationParkingLotID);
                                 objOutPutuser.LocationParkingLotID.LotVehicleAvailabilityName = lotavilability.LotVehicleAvailabilityName;
-
+                                var objchkIn = new DALCheckIn();
+                                var loclot=new  LocationParkingLot();
+                                loclot.LocationParkingLotID = userlot.LocationParkingLotID;
+                                loclot.LocationID.LocationID = userlot.LocationID.LocationID;
+                                objOutPutuser.LocationParkingLotID.LotBayIDs = objchkIn.GetLocationLotBayNumbers(loclot);
 
                             }
                         }

@@ -10,14 +10,15 @@ namespace InstaOperatorOauthAPIS.Models.APIOutPutModel
         {
             LocationID = new Location();
             ParkingBayID = new ParkingBay();
+            LotBayIDs = new List<ParkingBay>();
         }
         public int LocationParkingLotID { get; set; }
         public Location LocationID { get; set; }
         public int ParkingTypeID { get; set; }
         public int VehicleTypeID { get; set; }
         public string[] LotVehicleAvailabilityName { get; set; }
-       
         public ParkingBay ParkingBayID { get; set; }
+        public List<ParkingBay> LotBayIDs { get; set; }
         public int ParentLocationParkingLotID { get; set; }
         public string LocationParkingLotCode { get; set; }
         public string LocationParkingLotName { get; set; }
