@@ -81,7 +81,7 @@ namespace InstaOperatorOauthAPIS.DAL
                                 var loclot=new  LocationParkingLot();
                                 loclot.LocationParkingLotID = userlot.LocationParkingLotID;
                                 loclot.LocationID.LocationID = userlot.LocationID.LocationID;
-                                objOutPutuser.LocationParkingLotID.LotBayIDs = objchkIn.GetLocationLotBayNumbers(loclot);
+                                objOutPutuser.LocationParkingLotID.LotBayIDs = objchkIn.GetLocationLotBayNumbers(loclot);  // Get Lot BayNumbers
 
                             }
                         }
